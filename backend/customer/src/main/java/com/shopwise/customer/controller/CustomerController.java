@@ -31,4 +31,9 @@ public class CustomerController {
         customerService.deleteCustomer(id);
     }
 
+    @PutMapping("/{id}")
+    @ResponseStatus(code= HttpStatus.OK)
+    public Customer updateCustomer(@PathVariable UUID id, @Valid @RequestBody Customer updateCustomer){
+        return customerService.updateCustomer(id,updateCustomer);
+    }
 }
