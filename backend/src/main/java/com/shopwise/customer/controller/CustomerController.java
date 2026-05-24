@@ -9,15 +9,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/customer")
+@RequestMapping("/api/customers")
 @AllArgsConstructor
 @Validated
 public class CustomerController {
 
     private CustomerService customerService;
+
+    @GetMapping("/")
+    @ResponseStatus(code= HttpStatus.OK)
+    public List<Customer> getCustomers(){
+        return customerService.getCustomers();
+    }
 
     @PostMapping("/")
     @ResponseStatus(code= HttpStatus.CREATED)

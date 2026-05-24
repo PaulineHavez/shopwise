@@ -7,6 +7,7 @@ import com.shopwise.customer.repository.CustomerRepository;
 import com.shopwise.customer.service.CustomerService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -55,5 +56,10 @@ public class CustomerServiceImpl implements CustomerService {
         existing.setName(updatedCustomer.getName());
 
         return customerRepository.save(existing);
+    }
+
+    @Override
+    public List<Customer> getCustomers() {
+        return customerRepository.findAll();
     }
 }
