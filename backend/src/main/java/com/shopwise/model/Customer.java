@@ -1,4 +1,4 @@
-package com.shopwise.customer.model;
+package com.shopwise.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -29,6 +29,10 @@ import java.util.UUID;
         @Column(name = "email", nullable = false, unique = true)
         @NotNull
         private String email;
+
+        @Column(name = "hash_password", nullable = false)
+        @NotNull
+        private String password;
 
         @Column(name = "merchant_id", nullable = false)
         @NotNull

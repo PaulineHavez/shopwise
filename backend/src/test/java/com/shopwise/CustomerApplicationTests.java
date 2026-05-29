@@ -1,4 +1,4 @@
-package com.shopwise.customer;
+package com.shopwise;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

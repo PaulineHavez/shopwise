@@ -1,10 +1,10 @@
-package com.shopwise.customer.service.impl;
+package com.shopwise.service.impl;
 
-import com.shopwise.customer.exception.CustomerAlreadyExistsException;
-import com.shopwise.customer.exception.CustomerNotFoundException;
-import com.shopwise.customer.model.Customer;
-import com.shopwise.customer.repository.CustomerRepository;
-import com.shopwise.customer.service.CustomerService;
+import com.shopwise.exception.CustomerAlreadyExistsException;
+import com.shopwise.exception.CustomerNotFoundException;
+import com.shopwise.model.Customer;
+import com.shopwise.repository.CustomerRepository;
+import com.shopwise.service.CustomerService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

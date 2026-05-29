@@ -1,8 +1,8 @@
-package com.shopwise.customer.controller;
+package com.shopwise.controller;
 
 
-import com.shopwise.customer.model.Customer;
-import com.shopwise.customer.service.CustomerService;
+import com.shopwise.model.Customer;
+import com.shopwise.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

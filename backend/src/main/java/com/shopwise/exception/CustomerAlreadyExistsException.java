@@ -1,4 +1,4 @@
-package com.shopwise.customer.exception;
+package com.shopwise.exception;
 
 public class CustomerAlreadyExistsException extends RuntimeException{
 

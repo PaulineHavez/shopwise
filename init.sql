@@ -2,10 +2,12 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE MERCHANT(
                          merchant_id UUID DEFAULT gen_random_uuid(),
+                         name VARCHAR(50) NOT NULL,
                          phone_number VARCHAR(15) NOT NULL,
                          headquarters_address VARCHAR(255) NOT NULL,
-                         siret_number VARCHAR(14),
+                         siret_number VARCHAR(14) NOT NULL,
                          email VARCHAR(255) NOT NULL,
+                         password_hash VARCHAR(255) NOT NULL,
                          PRIMARY KEY(merchant_id),
                          UNIQUE(phone_number),
                          UNIQUE(siret_number),
@@ -26,6 +28,7 @@ CREATE TABLE CUSTOMER(
                          phone_number VARCHAR(15) NOT NULL,
                          email VARCHAR(255) NOT NULL,
                          merchant_id UUID NOT NULL,
+                         password_hash VARCHAR(255) NOT NULL,
                          PRIMARY KEY(customer_id),
                          UNIQUE(phone_number),
                          UNIQUE(email),
@@ -60,10 +63,11 @@ CREATE TABLE TRANSACTION(
 );
 
 -- Data test : Marie Dupont, merchant
-INSERT INTO MERCHANT (phone_number, headquarters_address, siret_number, email)
+INSERT INTO MERCHANT (phone_number, name,  headquarters_address, siret_number, email)
 VALUES (
            '060000000',
+           'Dupont',
            '12 rue du Nil Paris 75002',
            '80295478500015',
-           'marie.dupont@chezmarie.fr'
+           'marie.dupont@chezmarie.fr',
        );

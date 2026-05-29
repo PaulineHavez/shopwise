@@ -1,6 +1,6 @@
-package com.shopwise.customer.repository;
+package com.shopwise.repository;
 
-import com.shopwise.customer.model.Customer;
+import com.shopwise.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

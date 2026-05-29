@@ -1,6 +1,6 @@
-package com.shopwise.customer.service;
+package com.shopwise.service;
 
-import com.shopwise.customer.model.Customer;
+import com.shopwise.model.Customer;
 
 import java.util.List;
 import java.util.UUID;
