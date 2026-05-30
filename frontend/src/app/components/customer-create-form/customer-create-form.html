@@ -1,0 +1,82 @@
+<div class="dialog-container">
+
+  <div class="dialog-header">
+    <div class="logo-badge">
+      <mat-icon>storefront</mat-icon>
+    </div>
+    <div>
+      <h2>Créer une fiche client</h2>
+    </div>
+  </div>
+
+  <mat-dialog-content>
+    <form (ngSubmit)="onSubmit()" id="customerCreateForm">
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Nom</mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="name"
+          name="name"
+          placeholder="Nom du client"
+          required
+        />
+        <mat-icon matPrefix>profile</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Numéro de téléphone</mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="phoneNumber"
+          name="phoneNumber"
+          placeholder=" 06 ** ** ** **"
+          required
+        />
+        <mat-icon matPrefix>phone</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Adresse e-mail</mat-label>
+        <input
+          matInput
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="contact@moncommerce.fr"
+          required
+        />
+        <mat-icon matPrefix>mail_outline</mat-icon>
+        <span *ngIf="emailError">{{ emailError }}</span>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Mot de passe</mat-label>
+        <input
+          matInput
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="mot de passe"
+          required
+        />
+        <mat-icon matPrefix>password</mat-icon>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button (click)="onClose()">Annuler</button>
+    <button
+      mat-flat-button
+      color="primary"
+      form="customerCreateForm"
+      type="submit"
+      [disabled]="!email ||!name || !phoneNumber || !password || isLoading"
+      class="submit-btn"
+    >
+      <mat-spinner *ngIf="isLoading" diameter="18"></mat-spinner>
+      <span *ngIf="!isLoading">Créer</span>
+    </button>
+  </mat-dialog-actions>
+
+</div>
+

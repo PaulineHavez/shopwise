@@ -1,0 +1,11 @@
+<div class="dashboard">
+
+  <div *ngIf="alertMessage" [class]="alertSuccess ? 'alert success' : 'alert error'">
+    {{ alertMessage }}
+  </div>
+
+  <button mat-raised-button color="primary" (click)="openCreateCustomer()">
+    Ajouter un client
+  </button>
+
+</div>
