@@ -6,9 +6,11 @@ import com.shopwise.model.Merchant;
 import com.shopwise.repository.MerchantRepository;
 import com.shopwise.service.MerchantService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Service
 public class MerchantServiceImpl implements MerchantService {
 
     private final MerchantRepository merchantRepository;

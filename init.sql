@@ -7,7 +7,7 @@ CREATE TABLE MERCHANT(
                          headquarters_address VARCHAR(255) NOT NULL,
                          siret_number VARCHAR(14) NOT NULL,
                          email VARCHAR(255) NOT NULL,
-                         password_hash VARCHAR(255) NOT NULL,
+                         hash_password VARCHAR(255) NOT NULL,
                          PRIMARY KEY(merchant_id),
                          UNIQUE(phone_number),
                          UNIQUE(siret_number),
@@ -28,7 +28,7 @@ CREATE TABLE CUSTOMER(
                          phone_number VARCHAR(15) NOT NULL,
                          email VARCHAR(255) NOT NULL,
                          merchant_id UUID NOT NULL,
-                         password_hash VARCHAR(255) NOT NULL,
+                         hash_password VARCHAR(255) NOT NULL,
                          PRIMARY KEY(customer_id),
                          UNIQUE(phone_number),
                          UNIQUE(email),
@@ -63,11 +63,12 @@ CREATE TABLE TRANSACTION(
 );
 
 -- Data test : Marie Dupont, merchant
-INSERT INTO MERCHANT (phone_number, name,  headquarters_address, siret_number, email)
+INSERT INTO MERCHANT (phone_number, name,  headquarters_address, siret_number, email, hash_password)
 VALUES (
            '060000000',
            'Dupont',
            '12 rue du Nil Paris 75002',
            '80295478500015',
            'marie.dupont@chezmarie.fr',
+           '$2a$10$Omi/w/A2hLFokoXln21tHOtpBMzeV57psP1ymgbmmQ5OB8KVKTtgC'
        );

@@ -34,9 +34,9 @@ public class Merchant {
     @NotNull
     private String email;
 
-    @Column(name = "headquarters_adress", nullable = false, unique = true, length = 255)
+    @Column(name = "headquarters_address", nullable = false, unique = true, length = 255)
     @NotNull
-    private String headquarters_adress;
+    private String headquarters_address;
 
     @Column(name = "siret_number", nullable = false, unique = true, length = 14)
     @NotNull
@@ -45,6 +45,4 @@ public class Merchant {
     @Column(name = "hash_password", nullable = false)
     @NotNull
     private String password;
-
-
 }
