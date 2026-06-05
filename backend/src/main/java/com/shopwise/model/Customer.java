@@ -30,10 +30,6 @@ import java.util.UUID;
         @NotNull
         private String email;
 
-        @Column(name = "hash_password", nullable = false)
-        @NotNull
-        private String password;
-
         @Column(name = "merchant_id", nullable = false)
         @NotNull
         private UUID merchantId;
