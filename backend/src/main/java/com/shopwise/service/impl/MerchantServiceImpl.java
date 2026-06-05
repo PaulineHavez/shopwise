@@ -1,6 +1,5 @@
 package com.shopwise.service.impl;
 import com.shopwise.dto.LoginRequest;
-import com.shopwise.dto.LoginResponse;
 import com.shopwise.exception.BadCredentialsException;
 import com.shopwise.exception.MerchantNotFoundException;
 import com.shopwise.model.Merchant;
@@ -28,7 +27,7 @@ public class MerchantServiceImpl implements MerchantService {
                 .orElseThrow(MerchantNotFoundException::new);
     }
 
-    public LoginResponse login(LoginRequest request) {
+    public Merchant login(LoginRequest request) {
         Merchant merchant = merchantRepository.findByEmail(request.email())
                 .orElseThrow(MerchantNotFoundException::new);
 
@@ -36,10 +35,6 @@ public class MerchantServiceImpl implements MerchantService {
             throw new BadCredentialsException();
         }
 
-        return new LoginResponse(
-                merchant.getMerchantId(),
-                merchant.getName(),
-                merchant.getEmail()
-        );
+        return merchant;
     }
 }

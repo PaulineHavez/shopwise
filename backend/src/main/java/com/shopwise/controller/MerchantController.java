@@ -1,7 +1,6 @@
 package com.shopwise.controller;
 
 import com.shopwise.dto.LoginRequest;
-import com.shopwise.dto.LoginResponse;
 import com.shopwise.model.Merchant;
 import com.shopwise.service.CustomerService;
 import com.shopwise.service.MerchantService;
@@ -28,7 +27,7 @@ public class MerchantController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public Merchant login(@RequestBody LoginRequest request) {
         return merchantService.login(request);
     }
 }
