@@ -45,13 +45,11 @@ export class ProSpaceLoginForm {
    }).subscribe({
      next: (response:any) => {
        this.isLoading = false;
-       console.log('Successfull login', response);
        this.dialogRef.close(response);
        this.router.navigate(['/merchant', response.merchantId]);
      },
      error: (err) => {
        this.isLoading = false;
-       console.error('Login error :', err);
      }
    });
  }

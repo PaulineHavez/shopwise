@@ -48,18 +48,6 @@
         <mat-icon matPrefix>mail_outline</mat-icon>
         <span *ngIf="emailError">{{ emailError }}</span>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="field">
-        <mat-label>Mot de passe</mat-label>
-        <input
-          matInput
-          type="password"
-          [(ngModel)]="password"
-          name="password"
-          placeholder="mot de passe"
-          required
-        />
-        <mat-icon matPrefix>password</mat-icon>
-      </mat-form-field>
     </form>
   </mat-dialog-content>
 
@@ -70,7 +58,7 @@
       color="primary"
       form="customerCreateForm"
       type="submit"
-      [disabled]="!email ||!name || !phoneNumber || !password || isLoading"
+      [disabled]="!email ||!name || !phoneNumber || isLoading"
       class="submit-btn"
     >
       <mat-spinner *ngIf="isLoading" diameter="18"></mat-spinner>

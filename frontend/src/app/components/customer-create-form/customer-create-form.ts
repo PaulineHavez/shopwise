@@ -32,7 +32,6 @@ export class CustomerCreateForm {
      name: string = '';
      email: string = '';
      phoneNumber : string = '';
-     password: string = '';
      isLoading: boolean = false;
      emailError: string = '';
 
@@ -45,7 +44,7 @@ export class CustomerCreateForm {
 
     onSubmit(): void {
        this.emailError = '';
-      if (!this.email || !this.password || !this.name || !this.phoneNumber) return;
+      if (!this.email || !this.name || !this.phoneNumber) return;
 
       if (!this.isValidEmail(this.email)) {
             this.emailError = 'Veuillez entrer une adresse e-mail valide';
@@ -58,17 +57,14 @@ export class CustomerCreateForm {
         name : this.name,
         phoneNumber : this.phoneNumber,
         email: this.email,
-        password: this.password,
         merchantId: this.data.merchantId
       }).subscribe({
         next: (response:any) => {
           this.isLoading = false;
-          console.log('Creation successful', response);
           this.dialogRef.close({ success: true });
         },
         error: (err) => {
           this.isLoading = false;
-          console.error('Customer creation error :', err);
           this.dialogRef.close({ success: false });
         }
       });
