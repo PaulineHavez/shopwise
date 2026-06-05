@@ -20,7 +20,7 @@ public class Merchant {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "merchant_id", updatable = false, nullable = false)
-    private UUID customerId;
+    private UUID merchantId;
 
     @Column(name = "name", nullable = false)
     @NotNull
