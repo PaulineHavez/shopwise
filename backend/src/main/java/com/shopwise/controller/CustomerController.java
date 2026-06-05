@@ -43,10 +43,4 @@ public class CustomerController {
     public Customer updateCustomer(@PathVariable UUID id, @Valid @RequestBody Customer updateCustomer){
         return customerService.updateCustomer(id,updateCustomer);
     }
-
-    // URL : /api/customers/test@test.com
-    @GetMapping("/email/{email}")
-    public Customer getByEmail(@PathVariable String email) {
-        return customerService.getCustomerByEmail(email);
-    }
 }

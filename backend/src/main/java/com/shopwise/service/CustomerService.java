@@ -14,6 +14,4 @@ public interface CustomerService {
     Customer updateCustomer(UUID id, Customer updatedCustomer);
 
     List<Customer> getCustomers();
-
-    Customer getCustomerByEmail(String email);
 }

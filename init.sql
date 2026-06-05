@@ -28,6 +28,7 @@ CREATE TABLE CUSTOMER(
                          phone_number VARCHAR(15) NOT NULL,
                          email VARCHAR(255) NOT NULL,
                          merchant_id UUID NOT NULL,
+                         hash_password VARCHAR(255) NOT NULL,
                          PRIMARY KEY(customer_id),
                          UNIQUE(phone_number),
                          UNIQUE(email),
