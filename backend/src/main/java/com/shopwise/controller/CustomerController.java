@@ -44,7 +44,6 @@ public class CustomerController {
         return customerService.updateCustomer(id,updateCustomer);
     }
 
-    // URL : /api/customers/test@test.com
     @GetMapping("/email/{email}")
     public Customer getByEmail(@PathVariable String email) {
         return customerService.getCustomerByEmail(email);

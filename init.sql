@@ -36,8 +36,9 @@ CREATE TABLE CUSTOMER(
 
 CREATE TABLE APPOINTMENT(
                             appointment_id UUID DEFAULT gen_random_uuid(),
-                            appointment_date TIMESTAMP NOT NULL,
-                            status SMALLINT NOT NULL,
+                            start_at TIMESTAMP NOT NULL,
+                            end_at TIMESTAMP NOT NULL,
+                            status VARCHAR(255) NOT NULL,
                             earned_points SMALLINT,
                             service_id UUID NOT NULL,
                             merchant_id UUID NOT NULL,
