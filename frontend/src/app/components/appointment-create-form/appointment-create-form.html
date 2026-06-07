@@ -1,0 +1,113 @@
+<div class="dialog-container">
+
+  <div class="dialog-header">
+    <div class="logo-badge">
+      <mat-icon>calendar_add_on</mat-icon>
+    </div>
+    <div>
+      <h2>Créer un rendez-vous</h2>
+    </div>
+  </div>
+
+  <mat-dialog-content>
+    <form (ngSubmit)="onSubmit()" id="appointmentCreateForm">
+
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Email du client</mat-label>
+        <input
+          matInput
+          type="email"
+          [(ngModel)]="customerEmail"
+          name="customerEmail"
+          placeholder="client@email.com"
+          required
+        />
+        <mat-icon matPrefix>mail_outline</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Service</mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="serviceName"
+          name="serviceName"
+          placeholder="Nom du service"
+          required
+        />
+        <mat-icon matPrefix>content_cut</mat-icon>
+      </mat-form-field>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Date de début</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            [(ngModel)]="startDate"
+            name="startDate"
+            required
+          />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Heure de début</mat-label>
+          <input
+            matInput
+            type="time"
+            [(ngModel)]="startTime"
+            name="startTime"
+            required
+          />
+          <mat-icon matPrefix>schedule</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Date de fin</mat-label>
+          <input
+            matInput
+            [matDatepicker]="pickerEnd"
+            [(ngModel)]="endDate"
+            name="endDate"
+            required
+          />
+          <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+          <mat-datepicker #pickerEnd></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Heure de fin</mat-label>
+          <input
+            matInput
+            type="time"
+            [(ngModel)]="endTime"
+            name="endTime"
+            required
+          />
+          <mat-icon matPrefix>schedule</mat-icon>
+        </mat-form-field>
+      </div>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button (click)="onClose()">Annuler</button>
+    <button
+      mat-flat-button
+      color="primary"
+      form="appointmentCreateForm"
+      type="submit"
+      [disabled]="!customerEmail || !serviceName || !startDate || !startTime || !endDate || !endTime || isLoading"
+      class="submit-btn"
+    >
+      <mat-spinner *ngIf="isLoading" diameter="18"></mat-spinner>
+      <span *ngIf="!isLoading">Créer</span>
+    </button>
+  </mat-dialog-actions>
+
+</div>

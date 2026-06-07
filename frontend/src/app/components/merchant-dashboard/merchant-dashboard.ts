@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { CustomerCreateForm } from '../customer-create-form/customer-create-form';
 import { CustomerEditForm } from '../customer-edit-form/customer-edit-form';
 import { ActivatedRoute } from '@angular/router';
+import { AppointmentCreateForm } from '../appointment-create-form/appointment-create-form';
 
 @Component({
   selector: 'app-merchant-dashboard',
@@ -57,4 +58,22 @@ export class MerchantDashboard {
         }, 3000);
       });
     }
+
+     openCreateAppointment(): void {
+        const dialogRef = this.dialog.open(AppointmentCreateForm, {data: { merchantId: this.merchantId }
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          if (result?.success) {
+            this.alertMessage = 'Rendez-vous créé avec succès !';
+            this.alertSuccess = true;
+          } else if (result?.success === false) {
+            this.alertMessage = 'Erreur lors de la création du rendez-vous.';
+            this.alertSuccess = false;
+          }
+        setTimeout(() => {
+            this.alertMessage = '';
+          }, 3000);
+        });
+      }
 }
