@@ -21,6 +21,6 @@
   </button>
 
   @if (showAppointmentsList()) {
-  <app-appointments-list [merchantId]="merchantId" />
+  <app-appointments-list [merchantId]="merchantId"   (statusUpdated)="appointmentStatusUpdated($event)" />
   }
 </div>

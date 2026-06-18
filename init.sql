@@ -8,6 +8,7 @@ CREATE TABLE MERCHANT(
                          siret_number VARCHAR(14) NOT NULL,
                          email VARCHAR(255) NOT NULL,
                          hash_password VARCHAR(255) NOT NULL,
+                         automatic_earned_points SMALLINT,
                          PRIMARY KEY(merchant_id),
                          UNIQUE(phone_number),
                          UNIQUE(siret_number),
@@ -63,12 +64,13 @@ CREATE TABLE TRANSACTION(
 );
 
 -- Data test : Marie Dupont, merchant
-INSERT INTO MERCHANT (phone_number, name,  headquarters_address, siret_number, email, hash_password)
+INSERT INTO MERCHANT (phone_number, name,  headquarters_address, siret_number, email, hash_password, automatic_earned_points)
 VALUES (
            '060000000',
            'Dupont',
            '12 rue du Nil Paris 75002',
            '80295478500015',
            'marie.dupont@chezmarie.fr',
-           '$2a$10$Omi/w/A2hLFokoXln21tHOtpBMzeV57psP1ymgbmmQ5OB8KVKTtgC'
+           '$2a$10$Omi/w/A2hLFokoXln21tHOtpBMzeV57psP1ymgbmmQ5OB8KVKTtgC',
+           50
        );

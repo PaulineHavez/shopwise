@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, signal, input } from '@angular/core';
-import { httpResource } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, signal, input, output } from '@angular/core';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -32,6 +32,10 @@ import { DatePipe } from '@angular/common';
 })
 export class AppointmentsList {
   readonly merchantId = input.required<string>();
+  readonly statusUpdated = output<{
+    success: boolean
+  }>();
+  readonly editingAppointmentId = signal<string | null>(null);
 
   readonly dateFilter = signal<Date | null>(null);
   readonly statusFilter = signal<AppointmentStatus | null>(null);
@@ -54,6 +58,52 @@ export class AppointmentsList {
     const query = params.toString();
     return `/api/appointments/${this.merchantId()}${query ? '?' + query : ''}`;
   }, { defaultValue: [] });
+
+
+  constructor(
+    private http: HttpClient
+  ){}
+
+  editStatus(appointmentId: string): void {
+    this.editingAppointmentId.set(appointmentId);
+  }
+
+  updateStatus(
+    appointmentId: string,
+    status: AppointmentStatus
+  ): void {
+
+    this.http.put(
+      `/api/appointments/${appointmentId}`,
+        { status: status }
+    )
+    .subscribe({
+
+      next: () => {
+
+        this.editingAppointmentId.set(null);
+
+        this.statusUpdated.emit({
+          success: true
+        });
+
+        this.appointmentsResource.reload();
+
+      },
+
+      error: () => {
+
+        this.editingAppointmentId.set(null);
+
+        this.statusUpdated.emit({
+          success: false
+        });
+
+      }
+
+    });
+
+  }
 
   onEmailChange(value: string): void {
   this.emailFilter.set(value ? value : null);
