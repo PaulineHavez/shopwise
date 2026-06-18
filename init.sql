@@ -29,6 +29,7 @@ CREATE TABLE CUSTOMER(
                          phone_number VARCHAR(15) NOT NULL,
                          email VARCHAR(255) NOT NULL,
                          merchant_id UUID NOT NULL,
+                         hash_password VARCHAR(255),
                          PRIMARY KEY(customer_id),
                          UNIQUE(phone_number),
                          UNIQUE(email),
@@ -63,7 +64,7 @@ CREATE TABLE TRANSACTION(
                             FOREIGN KEY(customer_id) REFERENCES CUSTOMER(customer_id)
 );
 
--- Data test : Marie Dupont, merchant
+-- Data test : Marie Dupont, merchant. Password : 12345678
 INSERT INTO MERCHANT (phone_number, name,  headquarters_address, siret_number, email, hash_password, automatic_earned_points)
 VALUES (
            '060000000',

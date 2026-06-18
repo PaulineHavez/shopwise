@@ -9,9 +9,11 @@ import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { RegisterLoginForm } from '../register-login-form/register-login-form'
 
 @Component({
-  selector: 'app-espace-pro-dialog',
+  selector: 'app-customer-login-form',
   standalone: true,
   imports: [
     CommonModule,
@@ -24,29 +26,37 @@ import { Router } from '@angular/router';
     MatProgressSpinnerModule,
     HttpClientModule
   ],
-  templateUrl: '/proSpaceLoginForm.html',
-  styleUrl: '/proSpaceLoginForm.scss'
+  templateUrl: './customer-login-form.html',
+  styleUrl: './customer-login-form.scss'
 })
-export class ProSpaceLoginForm {
+
+export class CustomerLoginForm {
   email: string = '';
   password: string = '';
   isLoading: boolean = false;
 
-  constructor(private dialogRef: MatDialogRef<ProSpaceLoginForm>,   private http: HttpClient, private router: Router) {}
+  constructor(private dialogRef: MatDialogRef<CustomerLoginForm>,   private http: HttpClient, private router: Router, private dialog: MatDialog) {}
+
+   openRegisterDialog(): void {
+          this.dialogRef.close();
+          this.dialog.open(RegisterLoginForm, {
+            width: '420px',
+            panelClass: 'espace-pro-dialog'
+          });}
 
  onSubmit(): void {
    if (!this.email || !this.password) return;
 
    this.isLoading = true;
 
-   this.http.post('/api/merchants/login', {
+   this.http.post('/api/customers/login', {
      email: this.email,
      password: this.password
    }).subscribe({
      next: (response:any) => {
        this.isLoading = false;
        this.dialogRef.close(response);
-       this.router.navigate(['/merchant', response.merchantId]);
+      this.router.navigate(['/customer', response.customerId]);
      },
      error: (err) => {
        this.isLoading = false;
@@ -57,4 +67,5 @@ export class ProSpaceLoginForm {
   onClose(): void {
     this.dialogRef.close();
   }
+
 }

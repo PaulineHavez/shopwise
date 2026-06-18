@@ -33,5 +33,8 @@ import java.util.UUID;
         @Column(name = "merchant_id", nullable = false)
         @NotNull
         private UUID merchantId;
+
+        @Column(name = "hash_password")
+        private String password;
     }
 
