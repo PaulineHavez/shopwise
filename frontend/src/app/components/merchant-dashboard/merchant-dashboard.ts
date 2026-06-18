@@ -81,4 +81,31 @@ export class MerchantDashboard {
           }, 3000);
         });
       }
+
+    appointmentStatusUpdated(event: {success:boolean}) {
+
+      if(event.success){
+
+        this.alertMessage =
+          'Statut du rendez-vous mis à jour avec succès !';
+
+        this.alertSuccess = true;
+
+      } else {
+
+        this.alertMessage =
+          'Erreur lors de la mise à jour du statut du rendez-vous.';
+
+        this.alertSuccess = false;
+
+      }
+
+
+      setTimeout(() => {
+
+        this.alertMessage = '';
+
+      },3000);
+
+    }
 }

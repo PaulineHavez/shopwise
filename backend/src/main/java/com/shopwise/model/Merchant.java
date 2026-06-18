@@ -45,4 +45,7 @@ public class Merchant {
     @Column(name = "hash_password", nullable = false)
     @NotNull
     private String password;
+
+    @Column(name = "automatic_earned_points")
+    private Short automatic_earned_points;
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -40,6 +41,15 @@ public class AppointmentController {
                 .stream()
                 .map(AppointmentResponse::from)
                 .toList();
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Appointment updateAppointmentStatus(
+            @PathVariable UUID id,
+            @RequestBody Map<String, AppointmentStatus> body
+    ) {
+        return appointmentService.editAppointment(id,  body.get("status"));
     }
 
 }

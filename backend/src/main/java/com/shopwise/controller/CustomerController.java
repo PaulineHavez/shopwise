@@ -1,6 +1,5 @@
 package com.shopwise.controller;
 
-
 import com.shopwise.model.Customer;
 import com.shopwise.service.CustomerService;
 import jakarta.validation.Valid;
