@@ -1,5 +1,8 @@
 package com.shopwise.controller;
 
+import com.shopwise.dto.CustomerLoginResponse;
+import com.shopwise.dto.LoginRequest;
+import com.shopwise.dto.RegisterRequest;
 import com.shopwise.model.Customer;
 import com.shopwise.service.CustomerService;
 import jakarta.validation.Valid;
@@ -25,6 +28,12 @@ public class CustomerController {
         return customerService.getCustomers();
     }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(code= HttpStatus.OK)
+    public Customer getCustomer(@PathVariable UUID id){
+        return customerService.getCustomer(id);
+    }
+
     @PostMapping("/")
     @ResponseStatus(code= HttpStatus.CREATED)
     public Customer createCustomer(@Valid @RequestBody Customer customer){
@@ -46,5 +55,15 @@ public class CustomerController {
     @GetMapping("/email/{email}")
     public Customer getByEmail(@PathVariable String email) {
         return customerService.getCustomerByEmail(email);
+    }
+
+    @PostMapping("/login")
+    public CustomerLoginResponse login(@RequestBody LoginRequest request) {
+        return customerService.login(request);
+    }
+
+    @PutMapping("/register")
+    public Boolean register(@RequestBody RegisterRequest request) {
+        return customerService.register(request);
     }
 }

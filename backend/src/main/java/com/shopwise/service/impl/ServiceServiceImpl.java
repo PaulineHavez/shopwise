@@ -19,4 +19,7 @@ public class ServiceServiceImpl implements ServiceService {
        return serviceRepository.findByName(name)
               .orElseThrow(ServiceNotFoundException::new);
     }
+
+
+
 }

@@ -1,5 +1,8 @@
 package com.shopwise.service;
 
+import com.shopwise.dto.CustomerLoginResponse;
+import com.shopwise.dto.LoginRequest;
+import com.shopwise.dto.RegisterRequest;
 import com.shopwise.model.Customer;
 
 import java.util.List;
@@ -16,4 +19,10 @@ public interface CustomerService {
     List<Customer> getCustomers();
 
     Customer getCustomerByEmail(String email);
+
+    CustomerLoginResponse login(LoginRequest request);
+
+    Boolean register(RegisterRequest request);
+
+    Customer getCustomer(UUID id);
 }

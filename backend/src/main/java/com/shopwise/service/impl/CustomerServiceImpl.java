@@ -1,7 +1,13 @@
 package com.shopwise.service.impl;
 
+import com.shopwise.dto.CustomerLoginResponse;
+import com.shopwise.dto.LoginRequest;
+import com.shopwise.dto.RegisterRequest;
+import com.shopwise.exception.BadCredentialsException;
+import com.shopwise.exception.CustomerAccountAlreadyExistsException;
 import com.shopwise.exception.CustomerAlreadyExistsException;
 import com.shopwise.exception.CustomerNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.shopwise.model.Customer;
 import com.shopwise.repository.CustomerRepository;
 import com.shopwise.service.CustomerService;
@@ -14,8 +20,13 @@ import java.util.UUID;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public CustomerServiceImpl( CustomerRepository customerRepository) {this.customerRepository = customerRepository;}
+
+    public CustomerServiceImpl( CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
+        this.customerRepository = customerRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public Customer createCustomer(Customer customer) {
@@ -67,5 +78,45 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer getCustomerByEmail(String email) {
         return customerRepository.findByEmail(email)
                 .orElseThrow(CustomerNotFoundException::new);
+    }
+
+    public CustomerLoginResponse login(LoginRequest request) {
+        Customer customer = customerRepository.findByEmail(request.email())
+                .orElseThrow(CustomerNotFoundException::new);
+
+        if (!passwordEncoder.matches(request.password(), customer.getPassword())) {
+            throw new BadCredentialsException();
+        }
+
+        return new CustomerLoginResponse(
+                customer.getCustomerId(),
+                customer.getName(),
+                customer.getPhoneNumber(),
+                customer.getEmail()
+        );
+    }
+
+    @Override
+    public Boolean register(RegisterRequest request) {
+        Customer customer = customerRepository.findByEmail(request.email())
+                .orElseThrow(CustomerNotFoundException::new);
+
+        if(customer.getPassword() != null){
+            throw new CustomerAccountAlreadyExistsException();
+        }
+
+        String encodedPassword = passwordEncoder.encode(request.password());
+        customer.setPassword(encodedPassword);
+
+        customerRepository.save(customer);
+
+        return true;
+    }
+
+    @Override
+    public Customer getCustomer(UUID id) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(CustomerNotFoundException::new);
+      return customer;
     }
 }
