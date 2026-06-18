@@ -16,5 +16,11 @@
     Ajouter un rendez-vous
   </button>
 
+  <button mat-raised-button color="primary" (click)="toggleAppointmentsList()">
+    Liste des rendez-vous
+  </button>
 
+  @if (showAppointmentsList()) {
+  <app-appointments-list [merchantId]="merchantId" />
+  }
 </div>

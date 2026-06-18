@@ -7,9 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jspecify.annotations.Nullable;
 
-import javax.net.ssl.SSLSession;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -51,4 +49,8 @@ public class Appointment {
     @Column(name = "customer_id", nullable = false)
     @NotNull
     private UUID customerId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
+    private Customer customer;
 }
