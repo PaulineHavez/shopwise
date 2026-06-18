@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
@@ -6,11 +6,12 @@ import { CustomerCreateForm } from '../customer-create-form/customer-create-form
 import { CustomerEditForm } from '../customer-edit-form/customer-edit-form';
 import { ActivatedRoute } from '@angular/router';
 import { AppointmentCreateForm } from '../appointment-create-form/appointment-create-form';
+import { AppointmentsList } from '../appointments-list/appointments-list';
 
 @Component({
   selector: 'app-merchant-dashboard',
   standalone: true,
-  imports: [CommonModule, MatButtonModule],
+  imports: [CommonModule, MatButtonModule, AppointmentsList],
   templateUrl: './merchant-dashboard.html',
   styleUrl: './merchant-dashboard.scss',
 })
@@ -18,6 +19,10 @@ export class MerchantDashboard {
   alertMessage: string = '';
   alertSuccess: boolean = false;
   merchantId: string = '';
+  readonly showAppointmentsList = signal(false);
+  toggleAppointmentsList(): void {
+      this.showAppointmentsList.set(!this.showAppointmentsList());
+  }
 
   constructor(private dialog: MatDialog, private route: ActivatedRoute) {
       this.merchantId = this.route.snapshot.paramMap.get('id') || '';

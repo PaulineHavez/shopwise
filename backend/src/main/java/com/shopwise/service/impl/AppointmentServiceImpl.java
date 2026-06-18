@@ -5,9 +5,13 @@ import com.shopwise.model.Appointment;
 import com.shopwise.model.enums.AppointmentStatus;
 import com.shopwise.repository.AppointmentRepository;
 import com.shopwise.service.AppointmentService;
+import com.shopwise.specification.AppointmentSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
@@ -25,7 +29,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         List<AppointmentStatus> ignoredStatuses = List.of(
                 AppointmentStatus.CANCELLED,
-                AppointmentStatus.HONOURED
+                AppointmentStatus.COMPLETED
         );
         boolean isOverlapping = appointmentRepository.existsOverlappingAppointment(
                 appointment.getServiceId(),
@@ -39,5 +43,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         return appointmentRepository.save(appointment);
+    }
+
+    @Override
+    public List<Appointment> getAppointments(UUID merchantId, LocalDate date, AppointmentStatus status, String email) {
+        Specification<Appointment> spec = AppointmentSpecification.filterBy(merchantId, date, status, email);
+        return appointmentRepository.findAll(spec);
     }
 }
