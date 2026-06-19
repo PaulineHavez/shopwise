@@ -25,4 +25,6 @@ public interface CustomerService {
     Boolean register(RegisterRequest request);
 
     Customer getCustomer(UUID id);
+
+    Short getCustomerEarnedPoints(UUID customerId);
 }

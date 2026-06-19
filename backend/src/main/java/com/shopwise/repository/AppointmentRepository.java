@@ -26,4 +26,7 @@ public interface AppointmentRepository  extends JpaRepository<Appointment, UUID>
             @Param("endAt") LocalDateTime endAt,
             @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
     );
+
+    @Query("SELECT SUM(a.earnedPoints) FROM Appointment a WHERE a.customerId = :customerId")
+    Integer getEarnedPointsByCustomerId(@Param("customerId") UUID customerId);
 }

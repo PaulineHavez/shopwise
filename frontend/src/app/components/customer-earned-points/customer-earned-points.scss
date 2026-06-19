@@ -1,0 +1,16 @@
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+
+.error-state {
+  color: red;
+}
+
+.points-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 16px;
+}

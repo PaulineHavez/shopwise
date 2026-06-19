@@ -24,8 +24,8 @@ import { Router } from '@angular/router';
     MatProgressSpinnerModule,
     HttpClientModule
   ],
-  templateUrl: '/proSpaceLoginForm.html',
-  styleUrl: '/proSpaceLoginForm.scss'
+  templateUrl: './proSpaceLoginForm.html',
+  styleUrl: './proSpaceLoginForm.scss'
 })
 export class ProSpaceLoginForm {
   email: string = '';
