@@ -66,4 +66,9 @@ public class CustomerController {
     public Boolean register(@RequestBody RegisterRequest request) {
         return customerService.register(request);
     }
+
+      @GetMapping("/{id}/earnedPoints/")
+    public Short getCustomerEarnedPoints(@PathVariable UUID id) {
+        return customerService.getCustomerEarnedPoints(id);
+    }
 }

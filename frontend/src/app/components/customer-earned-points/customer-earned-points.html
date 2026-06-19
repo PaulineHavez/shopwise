@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Points fidélité</h2>
+
+<mat-dialog-content>
+  @if (earnedPointsResource.isLoading()) {
+  <div class="loading-state">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+  }
+
+  @if (earnedPointsResource.error()) {
+  <p class="error-state">Impossible de charger les points.</p>
+  }
+
+  @if (!earnedPointsResource.isLoading() && !earnedPointsResource.error()) {
+  <p class="points-value">{{ earnedPointsResource.value() ?? 0 }} points</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Fermer</button>
+</mat-dialog-actions>

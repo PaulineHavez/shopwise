@@ -54,7 +54,8 @@ CREATE TABLE APPOINTMENT(
 CREATE TABLE TRANSACTION(
                             transaction_id UUID DEFAULT gen_random_uuid(),
                             transaction_date TIMESTAMP NOT NULL,
-                            earned_points INT,
+                            earned_points SMALLINT,
+                            status VARCHAR(255) NOT NULL,
                             service_id UUID NOT NULL,
                             merchant_id UUID NOT NULL,
                             customer_id UUID NOT NULL,

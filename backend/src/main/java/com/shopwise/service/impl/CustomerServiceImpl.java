@@ -9,7 +9,9 @@ import com.shopwise.exception.CustomerAlreadyExistsException;
 import com.shopwise.exception.CustomerNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.shopwise.model.Customer;
+import com.shopwise.repository.AppointmentRepository;
 import com.shopwise.repository.CustomerRepository;
+import com.shopwise.repository.TransactionRepository;
 import com.shopwise.service.CustomerService;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +22,15 @@ import java.util.UUID;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final TransactionRepository transactionRepository;
+    private final AppointmentRepository appointmentRepository;
     private final PasswordEncoder passwordEncoder;
 
 
-    public CustomerServiceImpl( CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
+    public CustomerServiceImpl( CustomerRepository customerRepository, PasswordEncoder passwordEncoder, TransactionRepository transactionRepository, AppointmentRepository appointmentRepository) {
         this.customerRepository = customerRepository;
+        this.appointmentRepository = appointmentRepository;
+        this.transactionRepository = transactionRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -118,5 +124,16 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(CustomerNotFoundException::new);
       return customer;
+    }
+
+    @Override
+    public Short getCustomerEarnedPoints(UUID customerId) {
+        Integer transactionsEarnedPoints = transactionRepository.getEarnedPointsByCustomerId(customerId);
+        Integer appointmentsEarnedPoints = appointmentRepository.getEarnedPointsByCustomerId(customerId);
+
+        int total = (transactionsEarnedPoints != null ? transactionsEarnedPoints : 0)
+                  + (appointmentsEarnedPoints != null ? appointmentsEarnedPoints : 0);
+
+        return (short) total;
     }
 }
