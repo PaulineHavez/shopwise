@@ -65,14 +65,3 @@ CREATE TABLE TRANSACTION(
                             FOREIGN KEY(customer_id) REFERENCES CUSTOMER(customer_id)
 );
 
--- Data test : Marie Dupont, merchant. Password : 12345678
-INSERT INTO MERCHANT (phone_number, name,  headquarters_address, siret_number, email, hash_password, automatic_earned_points)
-VALUES (
-           '060000000',
-           'Dupont',
-           '12 rue du Nil Paris 75002',
-           '80295478500015',
-           'marie.dupont@chezmarie.fr',
-           '$2a$10$Omi/w/A2hLFokoXln21tHOtpBMzeV57psP1ymgbmmQ5OB8KVKTtgC',
-           50
-       );
