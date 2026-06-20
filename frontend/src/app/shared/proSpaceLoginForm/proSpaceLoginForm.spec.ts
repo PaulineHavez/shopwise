@@ -1,43 +1,34 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { CustomerLoginForm } from './customer-login-form';
-import { MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { ProSpaceLoginForm } from './proSpaceLoginForm';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { HttpClientModule, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
-describe('CustomerLoginForm', () => {
-  let component: CustomerLoginForm;
-  let fixture: ComponentFixture<CustomerLoginForm>;
+describe('ProSpaceLoginForm', () => {
+  let component: ProSpaceLoginForm;
+  let fixture: ComponentFixture<ProSpaceLoginForm>;
   let httpMock: HttpTestingController;
-  let dialogRef: jasmine.SpyObj<MatDialogRef<CustomerLoginForm>>;
-  let matDialog: jasmine.SpyObj<MatDialog>;
+  let dialogRef: jasmine.SpyObj<MatDialogRef<ProSpaceLoginForm>>;
   let router: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
-    dialogRef = jasmine.createSpyObj('MatDialogRef', ['close', 'afterClosed']);
-    dialogRef.afterClosed.and.returnValue(of(null));
-    matDialog = jasmine.createSpyObj('MatDialog', ['open']);
-    matDialog.open.and.returnValue({ afterClosed: () => of(null) } as any);
+    dialogRef = jasmine.createSpyObj('MatDialogRef', ['close']);
     router = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      imports: [CustomerLoginForm],
+      imports: [ProSpaceLoginForm],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: MatDialogRef, useValue: dialogRef },
-        { provide: MatDialog, useValue: matDialog },
         { provide: Router, useValue: router },
       ],
     })
-    .overrideComponent(CustomerLoginForm, {
-      remove: { imports: [HttpClientModule] },
-      add: { providers: [{ provide: MatDialog, useValue: matDialog }] },
-    })
+    .overrideComponent(ProSpaceLoginForm, { remove: { imports: [HttpClientModule] } })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CustomerLoginForm);
+    fixture = TestBed.createComponent(ProSpaceLoginForm);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
@@ -63,36 +54,30 @@ describe('CustomerLoginForm', () => {
   it('onSubmit() should return early when fields are empty', () => {
     component.onSubmit();
     expect(component.isLoading).toBeFalse();
-    httpMock.expectNone('/api/customers/login');
+    httpMock.expectNone('/api/merchants/login');
   });
 
   it('onSubmit() should post and navigate on success', () => {
-    component.email = 'alice@test.com';
+    component.email = 'merchant@test.com';
     component.password = 'secret';
 
     component.onSubmit();
     expect(component.isLoading).toBeTrue();
 
-    httpMock.expectOne('/api/customers/login').flush({ customerId: 'c-1' });
+    httpMock.expectOne('/api/merchants/login').flush({ merchantId: 'm-1' });
 
     expect(component.isLoading).toBeFalse();
-    expect(dialogRef.close).toHaveBeenCalledWith({ customerId: 'c-1' });
-    expect(router.navigate).toHaveBeenCalledWith(['/customer', 'c-1']);
+    expect(dialogRef.close).toHaveBeenCalledWith({ merchantId: 'm-1' });
+    expect(router.navigate).toHaveBeenCalledWith(['/merchant', 'm-1']);
   });
 
   it('onSubmit() should set isLoading to false on HTTP error', () => {
-    component.email = 'alice@test.com';
+    component.email = 'merchant@test.com';
     component.password = 'secret';
 
     component.onSubmit();
-    httpMock.expectOne('/api/customers/login').error(new ProgressEvent('error'));
+    httpMock.expectOne('/api/merchants/login').error(new ProgressEvent('error'));
 
     expect(component.isLoading).toBeFalse();
-  });
-
-  it('openRegisterDialog() should close current dialog and open RegisterLoginForm', () => {
-    component.openRegisterDialog();
-    expect(dialogRef.close).toHaveBeenCalled();
-    expect(matDialog.open).toHaveBeenCalled();
   });
 });
