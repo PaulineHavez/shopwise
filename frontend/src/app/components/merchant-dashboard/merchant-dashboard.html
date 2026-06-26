@@ -1,26 +1,37 @@
 <div class="dashboard">
 
-  <div *ngIf="alertMessage" [class]="alertSuccess ? 'alert success' : 'alert error'">
-    {{ alertMessage }}
+  <nav class="sidebar" [class.open]="menuOpen()">
+    <button mat-raised-button color="primary" (click)="openCreateCustomer()">
+      Ajouter un client
+    </button>
+
+    <button mat-raised-button color="primary" (click)="openEditCustomer()">
+      Mettre à jour un client
+    </button>
+
+    <button mat-raised-button color="primary" (click)="openCreateAppointment()">
+      Ajouter un rendez-vous
+    </button>
+
+    <button mat-raised-button color="primary" (click)="toggleAppointmentsList()">
+      Liste des rendez-vous
+    </button>
+  </nav>
+
+  <div class="main-content">
+    <button class="burger-btn" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div *ngIf="alertMessage" [class]="alertSuccess ? 'alert success' : 'alert error'">
+      {{ alertMessage }}
+    </div>
+
+    @if (showAppointmentsList()) {
+    <app-appointments-list [merchantId]="merchantId" (statusUpdated)="appointmentStatusUpdated($event)" />
+    }
   </div>
 
-  <button mat-raised-button color="primary" (click)="openCreateCustomer()">
-    Ajouter un client
-  </button>
-
-  <button mat-raised-button color="primary" (click)="openEditCustomer()">
-    Mettre à jour un client
-  </button>
-
-  <button mat-raised-button color="primary" (click)="openCreateAppointment()">
-    Ajouter un rendez-vous
-  </button>
-
-  <button mat-raised-button color="primary" (click)="toggleAppointmentsList()">
-    Liste des rendez-vous
-  </button>
-
-  @if (showAppointmentsList()) {
-  <app-appointments-list [merchantId]="merchantId"   (statusUpdated)="appointmentStatusUpdated($event)" />
-  }
 </div>

@@ -16,9 +16,14 @@ import { CustomerTransactionsList } from '../customer-transactions-list/customer
 export class CustomerDashboard {
   customerId: string = '';
   readonly showTransactionsList = signal(false);
+  readonly menuOpen = signal(false);
 
   constructor(private dialog: MatDialog, private route: ActivatedRoute) {
     this.customerId = this.route.snapshot.paramMap.get('id') || '';
+  }
+
+  toggleMenu(): void {
+    this.menuOpen.set(!this.menuOpen());
   }
 
   openCustomerData(): void {
