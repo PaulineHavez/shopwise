@@ -10,6 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthService } from '../../services/auth.service';
 import { RegisterLoginForm } from '../register-login-form/register-login-form'
 
 @Component({
@@ -35,7 +36,7 @@ export class CustomerLoginForm {
   password: string = '';
   isLoading: boolean = false;
 
-  constructor(private dialogRef: MatDialogRef<CustomerLoginForm>,   private http: HttpClient, private router: Router, private dialog: MatDialog) {}
+  constructor(private dialogRef: MatDialogRef<CustomerLoginForm>, private http: HttpClient, private router: Router, private dialog: MatDialog, private authService: AuthService) {}
 
    openRegisterDialog(): void {
           this.dialogRef.close();
@@ -55,8 +56,9 @@ export class CustomerLoginForm {
    }).subscribe({
      next: (response:any) => {
        this.isLoading = false;
+       this.authService.login(response.customerId, 'customer');
        this.dialogRef.close(response);
-      this.router.navigate(['/customer', response.customerId]);
+       this.router.navigate(['/customer', response.customerId]);
      },
      error: (err) => {
        this.isLoading = false;
