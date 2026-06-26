@@ -1,6 +1,28 @@
 <div class="appointments-list-container">
 
-  <div class="filters-bar">
+  <div class="mobile-filters-toggle">
+    <button mat-stroked-button type="button" (click)="toggleFilters()">
+      <mat-icon>tune</mat-icon>
+      Filtres
+      @if (activeFiltersCount() !== 0) {
+        <span class="filter-badge">{{ activeFiltersCount() }}</span>
+      }
+    </button>
+  </div>
+
+  @if (filtersOpen()) {
+    <div class="filters-backdrop" (click)="closeFilters()"></div>
+  }
+
+  <div class="filters-bar" [class.is-open]="filtersOpen()">
+
+    <div class="filters-panel-header">
+      <span class="filters-panel-title">Filtres</span>
+      <button mat-icon-button type="button" (click)="closeFilters()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Date</mat-label>
       <input matInput [matDatepicker]="picker" [ngModel]="dateFilter()" (ngModelChange)="dateFilter.set($event)" />
@@ -22,10 +44,16 @@
       <input matInput type="text" [ngModel]="emailFilter()" (ngModelChange)="onEmailChange($event)" />
     </mat-form-field>
 
-    <button mat-stroked-button type="button" (click)="resetFilters()">
-      <mat-icon>filter_alt_off</mat-icon>
-      Réinitialiser
-    </button>
+    <div class="filters-actions">
+      <button mat-stroked-button type="button" (click)="resetFilters()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Réinitialiser
+      </button>
+      <button mat-flat-button type="button" class="apply-btn" (click)="applyFilters()">
+        Appliquer
+      </button>
+    </div>
+
   </div>
 
   @if (appointmentsResource.isLoading()) {

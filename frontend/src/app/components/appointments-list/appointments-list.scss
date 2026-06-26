@@ -1,0 +1,141 @@
+.appointments-list-container {
+  padding: 0 24px 24px;
+
+  @media (max-width: 599px) {
+    padding: 0 12px 24px;
+  }
+}
+
+.mobile-filters-toggle {
+  display: none;
+
+  @media (max-width: 599px) {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 0;
+
+    .filter-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary);
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+  }
+}
+
+.filters-backdrop {
+  @media (max-width: 599px) {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 100;
+  }
+}
+
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0 24px;
+
+  .filter-field {
+    min-width: 180px;
+    flex: 1 1 180px;
+    max-width: 240px;
+  }
+
+  .filters-panel-header {
+    display: none;
+  }
+
+  .filters-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    .apply-btn {
+      display: none;
+    }
+  }
+
+  @media (max-width: 599px) {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 101;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 0 16px 32px;
+    background: var(--mat-sys-surface);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    pointer-events: none;
+
+    &.is-open {
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .filter-field {
+      max-width: 100%;
+      width: 100%;
+      --mat-form-field-container-height: 48px;
+      --mdc-outlined-text-field-label-text-size: 0.875rem;
+      --mdc-outlined-text-field-input-text-size: 0.875rem;
+      font-size: 0.875rem;
+    }
+
+    .filters-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0 4px;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    .filters-actions {
+      flex-direction: column;
+      width: 100%;
+      margin-top: 8px;
+
+      button {
+        width: 100%;
+      }
+
+      .apply-btn {
+        display: flex;
+      }
+    }
+  }
+}
+
+.appointments-table {
+  width: 100%;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.error-state,
+.empty-state {
+  text-align: center;
+  padding: 24px 0;
+  color: var(--mat-sys-on-surface-variant);
+}

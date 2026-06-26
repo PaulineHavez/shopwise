@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal, input, output } from '@angular/core';
 import { HttpClient, httpResource } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
@@ -36,10 +36,19 @@ export class AppointmentsList {
     success: boolean
   }>();
   readonly editingAppointmentId = signal<string | null>(null);
+  readonly filtersOpen = signal(false);
 
   readonly dateFilter = signal<Date | null>(null);
   readonly statusFilter = signal<AppointmentStatus | null>(null);
   readonly emailFilter = signal<string | null>(null);
+
+  readonly activeFiltersCount = computed(() => {
+    let count = 0;
+    if (this.dateFilter()) count++;
+    if (this.statusFilter()) count++;
+    if (this.emailFilter()) count++;
+    return count;
+  });
 
   readonly displayedColumns = ['startAt', 'endAt', 'status', 'email', 'earnedPoints'];
 
@@ -63,6 +72,18 @@ export class AppointmentsList {
   constructor(
     private http: HttpClient
   ){}
+
+  toggleFilters(): void {
+    this.filtersOpen.update(open => !open);
+  }
+
+  closeFilters(): void {
+    this.filtersOpen.set(false);
+  }
+
+  applyFilters(): void {
+    this.filtersOpen.set(false);
+  }
 
   editStatus(appointmentId: string): void {
     this.editingAppointmentId.set(appointmentId);
