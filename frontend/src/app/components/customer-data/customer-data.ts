@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -33,6 +33,7 @@ export class CustomerData implements OnInit {
 
   constructor(
     private http: HttpClient,
+    private dialogRef: MatDialogRef<CustomerData>,
     @Inject(MAT_DIALOG_DATA) private data: { customerId: string }
   ) {}
 
@@ -55,7 +56,7 @@ export class CustomerData implements OnInit {
 
         error: () => {
           this.isLoading = false;
-          console.error('Erreur lors du chargement du client');
+          this.dialogRef.close({ success: false });
         }
       });
 

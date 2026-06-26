@@ -1,7 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { CustomerData } from '../customer-data/customer-data';
 import { CustomerEarnedPoints } from '../customer-earned-points/customer-earned-points';
@@ -9,12 +8,14 @@ import { CustomerTransactionsList } from '../customer-transactions-list/customer
 
 @Component({
   selector: 'app-customer-dashboard',
-  imports: [CommonModule, MatButtonModule, CustomerTransactionsList],
+  imports: [MatButtonModule, CustomerTransactionsList],
   templateUrl: './customer-dashboard.html',
   styleUrl: './customer-dashboard.scss',
 })
 export class CustomerDashboard {
   customerId: string = '';
+  alertMessage: string = '';
+  alertSuccess: boolean = false;
   readonly showTransactionsList = signal(false);
   readonly menuOpen = signal(false);
 
@@ -27,11 +28,27 @@ export class CustomerDashboard {
   }
 
   openCustomerData(): void {
-    this.dialog.open(CustomerData, { data: { customerId: this.customerId } });
+    const dialogRef = this.dialog.open(CustomerData, { data: { customerId: this.customerId } });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result?.success === false) {
+        this.alertMessage = 'Erreur lors du chargement des informations personnelles.';
+        this.alertSuccess = false;
+        setTimeout(() => { this.alertMessage = ''; }, 3000);
+      }
+    });
   }
 
   openEarnedPoints(): void {
-    this.dialog.open(CustomerEarnedPoints, { data: { customerId: this.customerId } });
+    const dialogRef = this.dialog.open(CustomerEarnedPoints, { data: { customerId: this.customerId } });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result?.success === false) {
+        this.alertMessage = 'Erreur lors du chargement des points fidélité.';
+        this.alertSuccess = false;
+        setTimeout(() => { this.alertMessage = ''; }, 3000);
+      }
+    });
   }
 
   toggleTransactionsList(): void {
