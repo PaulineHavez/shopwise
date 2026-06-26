@@ -1,5 +1,10 @@
 .transactions-list-container {
   margin-top: 16px;
+  padding: 0 24px 24px;
+
+  @media (max-width: 599px) {
+    padding: 0 12px 24px;
+  }
 }
 
 .loading-state {
@@ -20,4 +25,52 @@
 
 .transactions-table {
   width: 100%;
+
+  @media (max-width: 599px) {
+    .mat-mdc-header-row {
+      display: none;
+    }
+
+    .mat-mdc-row {
+      display: block;
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      padding: 4px 12px;
+      height: auto;
+    }
+
+    .mat-mdc-cell {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--mat-sys-outline-variant);
+      min-height: unset;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &::before {
+        font-weight: 500;
+        color: var(--mat-sys-on-surface-variant);
+        font-size: 0.8125rem;
+        flex-shrink: 0;
+        margin-right: 8px;
+      }
+    }
+
+    .mat-column-transaction_date::before {
+      content: "Date";
+    }
+
+    .mat-column-status::before {
+      content: "Statut";
+    }
+
+    .mat-column-earnedPoints::before {
+      content: "Points gagnés";
+    }
+  }
 }
