@@ -1,19 +1,29 @@
 <div class="dashboard">
 
-  <button mat-raised-button color="primary" (click)="openCustomerData()">
-    Informations personnelles
-  </button>
+  <nav class="sidebar" [class.open]="menuOpen()">
+    <button mat-raised-button color="primary" (click)="openCustomerData()">
+      Informations personnelles
+    </button>
 
-  <button mat-raised-button color="primary" (click)="openEarnedPoints()">
-    Points fidélité
-  </button>
+    <button mat-raised-button color="primary" (click)="openEarnedPoints()">
+      Points fidélité
+    </button>
 
-  <button mat-raised-button color="primary" (click)="toggleTransactionsList()">
-    Mes transactions
-  </button>
+    <button mat-raised-button color="primary" (click)="toggleTransactionsList()">
+      Mes transactions
+    </button>
+  </nav>
 
-  @if (showTransactionsList()) {
-  <app-customer-transactions-list [customerId]="customerId" />
-  }
+  <div class="main-content">
+    <button class="burger-btn" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    @if (showTransactionsList()) {
+    <app-customer-transactions-list [customerId]="customerId" />
+    }
+  </div>
 
 </div>

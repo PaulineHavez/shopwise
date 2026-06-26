@@ -1,0 +1,23 @@
+.home {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 64px);
+
+  @media (max-width: 599px) {
+    min-height: calc(100vh - 56px);
+  }
+}
+
+.welcome-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #6e3222;
+  text-align: center;
+  padding: 0 16px;
+  line-height: 1.1;
+
+  @media (max-width: 599px) {
+    font-size: 2rem;
+  }
+}

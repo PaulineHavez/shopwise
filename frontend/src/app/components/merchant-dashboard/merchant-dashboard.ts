@@ -20,8 +20,14 @@ export class MerchantDashboard {
   alertSuccess: boolean = false;
   merchantId: string = '';
   readonly showAppointmentsList = signal(false);
+  readonly menuOpen = signal(false);
+
   toggleAppointmentsList(): void {
-      this.showAppointmentsList.set(!this.showAppointmentsList());
+    this.showAppointmentsList.set(!this.showAppointmentsList());
+  }
+
+  toggleMenu(): void {
+    this.menuOpen.set(!this.menuOpen());
   }
 
   constructor(private dialog: MatDialog, private route: ActivatedRoute) {
