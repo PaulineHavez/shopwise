@@ -21,6 +21,12 @@
       <span></span>
     </button>
 
+    @if (alertMessage) {
+      <div [class]="alertSuccess ? 'alert success' : 'alert error'">
+        {{ alertMessage }}
+      </div>
+    }
+
     @if (showTransactionsList()) {
     <app-customer-transactions-list [customerId]="customerId" />
     }
