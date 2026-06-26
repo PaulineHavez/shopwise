@@ -3,10 +3,12 @@ package com.shopwise.controller;
 import tools.jackson.databind.ObjectMapper;
 import com.shopwise.config.SecurityConfig;
 import com.shopwise.dto.CustomerLoginResponse;
+import com.shopwise.dto.CustomerRequest;
 import com.shopwise.dto.LoginRequest;
 import com.shopwise.dto.RegisterRequest;
 import com.shopwise.exception.CustomerNotFoundException;
 import com.shopwise.model.Customer;
+import com.shopwise.model.Merchant;
 import com.shopwise.service.CustomerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +51,13 @@ class CustomerControllerTest {
     private final UUID merchantId = UUID.fromString("00000000-0000-0000-0000-000000000002");
 
     private Customer buildCustomer() {
-        return new Customer(customerId, "Alice", "0601020304", "alice@example.com", merchantId, null);
+        Merchant merchant = new Merchant(merchantId, "Shop", "0600000000", "shop@example.com",
+                "1 rue de la Paix", "12345678901234", "hashed", null);
+        return new Customer(customerId, "Alice", "0601020304", "alice@example.com", merchant, null);
+    }
+
+    private CustomerRequest buildRequest() {
+        return new CustomerRequest("Alice", "0601020304", "alice@example.com", merchantId);
     }
 
     @Test
@@ -83,11 +91,11 @@ class CustomerControllerTest {
     @Test
     void createCustomer_validBody_returns201() throws Exception {
         Customer customer = buildCustomer();
-        when(customerService.createCustomer(any(Customer.class))).thenReturn(customer);
+        when(customerService.createCustomer(any(CustomerRequest.class))).thenReturn(customer);
 
         mockMvc.perform(post("/api/customers/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(customer)))
+                        .content(objectMapper.writeValueAsString(buildRequest())))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Alice"))
                 .andExpect(jsonPath("$.email").value("alice@example.com"));
@@ -121,12 +129,13 @@ class CustomerControllerTest {
 
     @Test
     void updateCustomer_existingId_returns200() throws Exception {
-        Customer updated = new Customer(customerId, "Alice Updated", "0601020304", "alice@example.com", merchantId, null);
-        when(customerService.updateCustomer(eq(customerId), any(Customer.class))).thenReturn(updated);
+        CustomerRequest request = new CustomerRequest("Alice Updated", "0601020304", "alice@example.com", merchantId);
+        Customer updated = new Customer(customerId, "Alice Updated", "0601020304", "alice@example.com", buildCustomer().getMerchant(), null);
+        when(customerService.updateCustomer(eq(customerId), any(CustomerRequest.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/customers/{id}", customerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updated)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Alice Updated"));
     }

@@ -1,5 +1,6 @@
 package com.shopwise.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -30,11 +31,11 @@ import java.util.UUID;
         @NotNull
         private String email;
 
-        @Column(name = "merchant_id", nullable = false)
-        @NotNull
-        private UUID merchantId;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "merchant_id", nullable = false)
+        @JsonIgnore
+        private Merchant merchant;
 
         @Column(name = "hash_password")
         private String password;
     }
-

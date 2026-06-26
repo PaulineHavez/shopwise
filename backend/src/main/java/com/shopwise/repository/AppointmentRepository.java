@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.UUID;
 
-public interface AppointmentRepository  extends JpaRepository<Appointment, UUID>, JpaSpecificationExecutor<Appointment> {
+public interface AppointmentRepository extends JpaRepository<Appointment, UUID>, JpaSpecificationExecutor<Appointment> {
 
     @Query("""
     SELECT COUNT(a) > 0 FROM Appointment a
-    WHERE a.serviceId = :serviceId
+    WHERE a.service.serviceId = :serviceId
     AND a.startAt < :endAt
     AND a.endAt > :startAt
     AND a.status NOT IN :excludedStatuses
@@ -27,6 +27,6 @@ public interface AppointmentRepository  extends JpaRepository<Appointment, UUID>
             @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
     );
 
-    @Query("SELECT SUM(a.earnedPoints) FROM Appointment a WHERE a.customerId = :customerId")
+    @Query("SELECT SUM(a.earnedPoints) FROM Appointment a WHERE a.customer.customerId = :customerId")
     Integer getEarnedPointsByCustomerId(@Param("customerId") UUID customerId);
 }

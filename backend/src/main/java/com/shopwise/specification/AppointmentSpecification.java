@@ -20,7 +20,7 @@ public class AppointmentSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             if (merchantId != null) {
-                predicates.add(cb.equal(root.get("merchantId"), merchantId));
+                predicates.add(cb.equal(root.get("merchant").get("merchantId"), merchantId));
             }
 
             if (date != null) {

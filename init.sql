@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE MERCHANT(
                          merchant_id UUID DEFAULT gen_random_uuid(),
-                         name VARCHAR(50) NOT NULL,
+                         name VARCHAR(255) NOT NULL,
                          phone_number VARCHAR(15) NOT NULL,
                          headquarters_address VARCHAR(255) NOT NULL,
                          siret_number VARCHAR(14) NOT NULL,

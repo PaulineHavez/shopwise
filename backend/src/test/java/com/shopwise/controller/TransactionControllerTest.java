@@ -1,6 +1,8 @@
 package com.shopwise.controller;
 
 import com.shopwise.config.SecurityConfig;
+import com.shopwise.model.Customer;
+import com.shopwise.model.Merchant;
 import com.shopwise.model.Transaction;
 import com.shopwise.model.enums.TransactionStatus;
 import com.shopwise.service.TransactionService;
@@ -32,13 +34,18 @@ class TransactionControllerTest {
 
     private final UUID customerId = UUID.fromString("00000000-0000-0000-0000-000000000001");
     private final UUID merchantId = UUID.fromString("00000000-0000-0000-0000-000000000002");
-    private final UUID serviceId  = UUID.fromString("00000000-0000-0000-0000-000000000003");
     private final UUID txId       = UUID.fromString("00000000-0000-0000-0000-000000000004");
+
+    private Customer buildCustomer() {
+        Merchant merchant = new Merchant(merchantId, "Shop", "0600000000", "shop@example.com",
+                "1 rue de la Paix", "12345678901234", "hashed", null);
+        return new Customer(customerId, "Alice", "0601020304", "alice@example.com", merchant, null);
+    }
 
     @Test
     void getTransactionsByCustomerId_returns200WithList() throws Exception {
         Transaction tx = new Transaction(txId, LocalDateTime.of(2025, 1, 10, 9, 0),
-                TransactionStatus.COMPLETED, (short) 20, serviceId, merchantId, customerId);
+                TransactionStatus.COMPLETED, (short) 20, null, null, buildCustomer());
         when(transactionService.getTransactionsByCustomerId(customerId)).thenReturn(List.of(tx));
 
         mockMvc.perform(get("/api/transactions/{customerId}", customerId))

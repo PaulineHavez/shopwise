@@ -1,5 +1,6 @@
 package com.shopwise.controller;
 
+import com.shopwise.dto.AppointmentRequest;
 import com.shopwise.dto.AppointmentResponse;
 import com.shopwise.model.Appointment;
 import com.shopwise.model.enums.AppointmentStatus;
@@ -25,9 +26,9 @@ public class AppointmentController {
     private AppointmentService appointmentService;
 
     @PostMapping("/")
-    @ResponseStatus(code= HttpStatus.CREATED)
-    public Appointment createAppointment(@Valid @RequestBody Appointment appointment){
-        return appointmentService.createAppointment(appointment);
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public Appointment createAppointment(@Valid @RequestBody AppointmentRequest request) {
+        return appointmentService.createAppointment(request);
     }
 
     @GetMapping("/{merchantId}")
@@ -37,7 +38,7 @@ public class AppointmentController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(required = false) AppointmentStatus status,
             @RequestParam(required = false) String email) {
-        return appointmentService.getAppointments(merchantId,date, status, email)
+        return appointmentService.getAppointments(merchantId, date, status, email)
                 .stream()
                 .map(AppointmentResponse::from)
                 .toList();
@@ -49,7 +50,6 @@ public class AppointmentController {
             @PathVariable UUID id,
             @RequestBody Map<String, AppointmentStatus> body
     ) {
-        return appointmentService.editAppointment(id,  body.get("status"));
+        return appointmentService.editAppointment(id, body.get("status"));
     }
-
 }

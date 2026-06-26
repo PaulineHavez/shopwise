@@ -1,6 +1,7 @@
 package com.shopwise.service;
 
 import com.shopwise.dto.CustomerLoginResponse;
+import com.shopwise.dto.CustomerRequest;
 import com.shopwise.dto.LoginRequest;
 import com.shopwise.dto.RegisterRequest;
 import com.shopwise.exception.BadCredentialsException;
@@ -8,8 +9,10 @@ import com.shopwise.exception.CustomerAccountAlreadyExistsException;
 import com.shopwise.exception.CustomerAlreadyExistsException;
 import com.shopwise.exception.CustomerNotFoundException;
 import com.shopwise.model.Customer;
+import com.shopwise.model.Merchant;
 import com.shopwise.repository.AppointmentRepository;
 import com.shopwise.repository.CustomerRepository;
+import com.shopwise.repository.MerchantRepository;
 import com.shopwise.repository.TransactionRepository;
 import com.shopwise.service.impl.CustomerServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -34,6 +37,8 @@ class CustomerServiceImplTest {
     @Mock
     private CustomerRepository customerRepository;
     @Mock
+    private MerchantRepository merchantRepository;
+    @Mock
     private TransactionRepository transactionRepository;
     @Mock
     private AppointmentRepository appointmentRepository;
@@ -47,17 +52,27 @@ class CustomerServiceImplTest {
     private final UUID merchantId = UUID.fromString("00000000-0000-0000-0000-000000000002");
 
     private Customer buildCustomer() {
-        return new Customer(customerId, "Alice", "0601020304", "alice@example.com", merchantId, null);
+        Merchant merchant = new Merchant(merchantId, "Shop", "0600000000", "shop@example.com",
+                "1 rue de la Paix", "12345678901234", "hashed", null);
+        return new Customer(customerId, "Alice", "0601020304", "alice@example.com", merchant, null);
+    }
+
+    private CustomerRequest buildRequest() {
+        return new CustomerRequest("Alice", "0601020304", "alice@example.com", merchantId);
+    }
+
+    private Merchant buildMerchant() {
+        return new Merchant(merchantId, "Shop", "0600000000", "shop@example.com",
+                "1 rue de la Paix", "12345678901234", "hashed", null);
     }
 
     // createCustomer
 
     @Test
     void createCustomer_emailAlreadyExists_throwsCustomerAlreadyExistsException() {
-        Customer customer = buildCustomer();
-        when(customerRepository.existsByEmail(customer.getEmail())).thenReturn(true);
+        when(customerRepository.existsByEmail("alice@example.com")).thenReturn(true);
 
-        assertThatThrownBy(() -> service.createCustomer(customer))
+        assertThatThrownBy(() -> service.createCustomer(buildRequest()))
                 .isInstanceOf(CustomerAlreadyExistsException.class);
 
         verify(customerRepository, never()).save(any());
@@ -65,11 +80,10 @@ class CustomerServiceImplTest {
 
     @Test
     void createCustomer_phoneAlreadyExists_throwsCustomerAlreadyExistsException() {
-        Customer customer = buildCustomer();
-        when(customerRepository.existsByEmail(customer.getEmail())).thenReturn(false);
-        when(customerRepository.existsByPhoneNumber(customer.getPhoneNumber())).thenReturn(true);
+        when(customerRepository.existsByEmail("alice@example.com")).thenReturn(false);
+        when(customerRepository.existsByPhoneNumber("0601020304")).thenReturn(true);
 
-        assertThatThrownBy(() -> service.createCustomer(customer))
+        assertThatThrownBy(() -> service.createCustomer(buildRequest()))
                 .isInstanceOf(CustomerAlreadyExistsException.class);
 
         verify(customerRepository, never()).save(any());
@@ -78,11 +92,12 @@ class CustomerServiceImplTest {
     @Test
     void createCustomer_noConflict_returnsSavedCustomer() {
         Customer customer = buildCustomer();
-        when(customerRepository.existsByEmail(customer.getEmail())).thenReturn(false);
-        when(customerRepository.existsByPhoneNumber(customer.getPhoneNumber())).thenReturn(false);
-        when(customerRepository.save(customer)).thenReturn(customer);
+        when(customerRepository.existsByEmail("alice@example.com")).thenReturn(false);
+        when(customerRepository.existsByPhoneNumber("0601020304")).thenReturn(false);
+        when(merchantRepository.findById(merchantId)).thenReturn(Optional.of(buildMerchant()));
+        when(customerRepository.save(any())).thenReturn(customer);
 
-        Customer result = service.createCustomer(customer);
+        Customer result = service.createCustomer(buildRequest());
 
         assertThat(result).isEqualTo(customer);
     }
@@ -114,40 +129,38 @@ class CustomerServiceImplTest {
     void updateCustomer_notFound_throwsCustomerNotFoundException() {
         when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.updateCustomer(customerId, buildCustomer()))
+        assertThatThrownBy(() -> service.updateCustomer(customerId, buildRequest()))
                 .isInstanceOf(CustomerNotFoundException.class);
     }
 
     @Test
     void updateCustomer_newEmailAlreadyTaken_throwsCustomerAlreadyExistsException() {
-        Customer existing = new Customer(customerId, "Alice", "0601020304", "old@example.com", merchantId, null);
-        Customer updated = buildCustomer(); // email = alice@example.com
+        Customer existing = new Customer(customerId, "Alice", "0601020304", "old@example.com", buildMerchant(), null);
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(existing));
-        when(customerRepository.existsByEmail(updated.getEmail())).thenReturn(true);
+        when(customerRepository.existsByEmail("alice@example.com")).thenReturn(true);
 
-        assertThatThrownBy(() -> service.updateCustomer(customerId, updated))
+        assertThatThrownBy(() -> service.updateCustomer(customerId, buildRequest()))
                 .isInstanceOf(CustomerAlreadyExistsException.class);
     }
 
     @Test
     void updateCustomer_newPhoneAlreadyTaken_throwsCustomerAlreadyExistsException() {
-        Customer existing = new Customer(customerId, "Alice", "0000000000", "alice@example.com", merchantId, null);
-        Customer updated = buildCustomer(); // same email, different phone = 0601020304
+        Customer existing = new Customer(customerId, "Alice", "0000000000", "alice@example.com", buildMerchant(), null);
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(existing));
-        when(customerRepository.existsByPhoneNumber(updated.getPhoneNumber())).thenReturn(true);
+        when(customerRepository.existsByPhoneNumber("0601020304")).thenReturn(true);
 
-        assertThatThrownBy(() -> service.updateCustomer(customerId, updated))
+        assertThatThrownBy(() -> service.updateCustomer(customerId, buildRequest()))
                 .isInstanceOf(CustomerAlreadyExistsException.class);
     }
 
     @Test
     void updateCustomer_sameEmailAndPhone_updatesSuccessfully() {
         Customer existing = buildCustomer();
-        Customer updated = new Customer(customerId, "Alice Renamed", "0601020304", "alice@example.com", merchantId, null);
+        CustomerRequest request = new CustomerRequest("Alice Renamed", "0601020304", "alice@example.com", merchantId);
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(existing));
         when(customerRepository.save(existing)).thenReturn(existing);
 
-        Customer result = service.updateCustomer(customerId, updated);
+        Customer result = service.updateCustomer(customerId, request);
 
         assertThat(result.getName()).isEqualTo("Alice Renamed");
         verify(customerRepository, never()).existsByEmail(any());
@@ -156,13 +169,12 @@ class CustomerServiceImplTest {
 
     @Test
     void updateCustomer_newEmailNotTaken_updatesSuccessfully() {
-        Customer existing = new Customer(customerId, "Alice", "0601020304", "old@example.com", merchantId, null);
-        Customer updated = buildCustomer();
+        Customer existing = new Customer(customerId, "Alice", "0601020304", "old@example.com", buildMerchant(), null);
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(existing));
-        when(customerRepository.existsByEmail(updated.getEmail())).thenReturn(false);
+        when(customerRepository.existsByEmail("alice@example.com")).thenReturn(false);
         when(customerRepository.save(existing)).thenReturn(existing);
 
-        Customer result = service.updateCustomer(customerId, updated);
+        Customer result = service.updateCustomer(customerId, buildRequest());
 
         assertThat(result.getEmail()).isEqualTo("alice@example.com");
     }
@@ -210,7 +222,7 @@ class CustomerServiceImplTest {
 
     @Test
     void login_wrongPassword_throwsBadCredentialsException() {
-        Customer customer = new Customer(customerId, "Alice", "0601020304", "alice@example.com", merchantId, "hashed");
+        Customer customer = new Customer(customerId, "Alice", "0601020304", "alice@example.com", buildMerchant(), "hashed");
         when(customerRepository.findByEmail(customer.getEmail())).thenReturn(Optional.of(customer));
         when(passwordEncoder.matches("wrong", "hashed")).thenReturn(false);
 
@@ -220,7 +232,7 @@ class CustomerServiceImplTest {
 
     @Test
     void login_validCredentials_returnsLoginResponse() {
-        Customer customer = new Customer(customerId, "Alice", "0601020304", "alice@example.com", merchantId, "hashed");
+        Customer customer = new Customer(customerId, "Alice", "0601020304", "alice@example.com", buildMerchant(), "hashed");
         when(customerRepository.findByEmail(customer.getEmail())).thenReturn(Optional.of(customer));
         when(passwordEncoder.matches("secret", "hashed")).thenReturn(true);
 
@@ -242,7 +254,7 @@ class CustomerServiceImplTest {
 
     @Test
     void register_passwordAlreadySet_throwsCustomerAccountAlreadyExistsException() {
-        Customer customer = new Customer(customerId, "Alice", "0601020304", "alice@example.com", merchantId, "existing_hash");
+        Customer customer = new Customer(customerId, "Alice", "0601020304", "alice@example.com", buildMerchant(), "existing_hash");
         when(customerRepository.findByEmail(customer.getEmail())).thenReturn(Optional.of(customer));
 
         assertThatThrownBy(() -> service.register(new RegisterRequest("alice@example.com", "pass")))
@@ -251,7 +263,7 @@ class CustomerServiceImplTest {
 
     @Test
     void register_noExistingPassword_encodesAndSaves() {
-        Customer customer = buildCustomer(); // password = null
+        Customer customer = buildCustomer();
         when(customerRepository.findByEmail(customer.getEmail())).thenReturn(Optional.of(customer));
         when(passwordEncoder.encode("pass")).thenReturn("encoded_pass");
         when(customerRepository.save(any())).thenReturn(customer);

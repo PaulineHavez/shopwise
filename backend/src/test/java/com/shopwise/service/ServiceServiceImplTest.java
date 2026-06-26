@@ -1,6 +1,7 @@
 package com.shopwise.service;
 
 import com.shopwise.exception.ServiceNotFoundException;
+import com.shopwise.model.Merchant;
 import com.shopwise.model.Service;
 import com.shopwise.repository.ServiceRepository;
 import com.shopwise.service.impl.ServiceServiceImpl;
@@ -29,6 +30,11 @@ class ServiceServiceImplTest {
     private final UUID serviceId  = UUID.fromString("00000000-0000-0000-0000-000000000003");
     private final UUID merchantId = UUID.fromString("00000000-0000-0000-0000-000000000002");
 
+    private Merchant buildMerchant() {
+        return new Merchant(merchantId, "Shop", "0600000000", "shop@example.com",
+                "1 rue de la Paix", "12345678901234", "hashed", null);
+    }
+
     @Test
     void getServiceByName_notFound_throwsServiceNotFoundException() {
         when(serviceRepository.findByName("Haircut")).thenReturn(Optional.empty());
@@ -39,7 +45,7 @@ class ServiceServiceImplTest {
 
     @Test
     void getServiceByName_found_returnsService() {
-        Service svc = new Service(serviceId, "Haircut", merchantId);
+        Service svc = new Service(serviceId, "Haircut", buildMerchant());
         when(serviceRepository.findByName("Haircut")).thenReturn(Optional.of(svc));
 
         Service result = service.getServiceByName("Haircut");

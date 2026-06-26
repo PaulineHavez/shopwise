@@ -1,8 +1,9 @@
 package com.shopwise.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.shopwise.model.enums.TransactionStatus;
 import jakarta.persistence.*;
-        import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,7 @@ public class Transaction {
 
     @Column(name = "transaction_date", nullable = false)
     @NotNull
-    private LocalDateTime transaction_date;
+    private LocalDateTime transactionDate;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -34,15 +35,18 @@ public class Transaction {
     @Column(name = "earned_points")
     private Short earnedPoints;
 
-    @Column(name = "service_id", nullable = false)
-    @NotNull
-    private UUID serviceId;;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id", nullable = false)
+    @JsonIgnore
+    private Service service;
 
-    @Column(name = "merchant_id", nullable = false)
-    @NotNull
-    private UUID merchantId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "merchant_id", nullable = false)
+    @JsonIgnore
+    private Merchant merchant;
 
-    @Column(name = "customer_id", nullable = false)
-    @NotNull
-    private UUID customerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false)
+    @JsonIgnore
+    private Customer customer;
 }

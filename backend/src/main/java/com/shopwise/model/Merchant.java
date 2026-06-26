@@ -36,16 +36,16 @@ public class Merchant {
 
     @Column(name = "headquarters_address", nullable = false, unique = true, length = 255)
     @NotNull
-    private String headquarters_address;
+    private String headquartersAddress;
 
     @Column(name = "siret_number", nullable = false, unique = true, length = 14)
     @NotNull
-    private String siret_number;
+    private String siretNumber;
 
     @Column(name = "hash_password", nullable = false)
     @NotNull
     private String password;
 
     @Column(name = "automatic_earned_points")
-    private Short automatic_earned_points;
+    private Short automaticEarnedPoints;
 }

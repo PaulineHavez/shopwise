@@ -1,6 +1,7 @@
 package com.shopwise.controller;
 
 import com.shopwise.dto.CustomerLoginResponse;
+import com.shopwise.dto.CustomerRequest;
 import com.shopwise.dto.LoginRequest;
 import com.shopwise.dto.RegisterRequest;
 import com.shopwise.model.Customer;
@@ -23,33 +24,33 @@ public class CustomerController {
     private CustomerService customerService;
 
     @GetMapping("/")
-    @ResponseStatus(code= HttpStatus.OK)
-    public List<Customer> getCustomers(){
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<Customer> getCustomers() {
         return customerService.getCustomers();
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(code= HttpStatus.OK)
-    public Customer getCustomer(@PathVariable UUID id){
+    @ResponseStatus(code = HttpStatus.OK)
+    public Customer getCustomer(@PathVariable UUID id) {
         return customerService.getCustomer(id);
     }
 
     @PostMapping("/")
-    @ResponseStatus(code= HttpStatus.CREATED)
-    public Customer createCustomer(@Valid @RequestBody Customer customer){
-        return customerService.createCustomer(customer);
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public Customer createCustomer(@Valid @RequestBody CustomerRequest request) {
+        return customerService.createCustomer(request);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(code= HttpStatus.NO_CONTENT)
-    public void deleteCustomer(@PathVariable UUID id){
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteCustomer(@PathVariable UUID id) {
         customerService.deleteCustomer(id);
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(code= HttpStatus.OK)
-    public Customer updateCustomer(@PathVariable UUID id, @Valid @RequestBody Customer updateCustomer){
-        return customerService.updateCustomer(id,updateCustomer);
+    @ResponseStatus(code = HttpStatus.OK)
+    public Customer updateCustomer(@PathVariable UUID id, @Valid @RequestBody CustomerRequest request) {
+        return customerService.updateCustomer(id, request);
     }
 
     @GetMapping("/email/{email}")
@@ -67,7 +68,7 @@ public class CustomerController {
         return customerService.register(request);
     }
 
-      @GetMapping("/{id}/earnedPoints/")
+    @GetMapping("/{id}/earnedPoints/")
     public Short getCustomerEarnedPoints(@PathVariable UUID id) {
         return customerService.getCustomerEarnedPoints(id);
     }

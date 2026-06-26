@@ -2,6 +2,7 @@ package com.shopwise.controller;
 
 import com.shopwise.config.SecurityConfig;
 import com.shopwise.exception.ServiceNotFoundException;
+import com.shopwise.model.Merchant;
 import com.shopwise.model.Service;
 import com.shopwise.service.ServiceService;
 import org.junit.jupiter.api.Test;
@@ -28,12 +29,17 @@ class ServiceControllerTest {
     @MockitoBean
     private ServiceService serviceService;
 
-    private final UUID serviceId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private final UUID serviceId  = UUID.fromString("00000000-0000-0000-0000-000000000001");
     private final UUID merchantId = UUID.fromString("00000000-0000-0000-0000-000000000002");
+
+    private Merchant buildMerchant() {
+        return new Merchant(merchantId, "Shop", "0600000000", "shop@example.com",
+                "1 rue de la Paix", "12345678901234", "hashed", null);
+    }
 
     @Test
     void getServiceByName_existingName_returns200() throws Exception {
-        Service service = new Service(serviceId, "Coupe", merchantId);
+        Service service = new Service(serviceId, "Coupe", buildMerchant());
         when(serviceService.getServiceByName("Coupe")).thenReturn(service);
 
         mockMvc.perform(get("/api/services/{name}", "Coupe"))

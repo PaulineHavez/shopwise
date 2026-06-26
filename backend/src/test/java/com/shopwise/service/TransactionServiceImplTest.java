@@ -1,5 +1,7 @@
 package com.shopwise.service;
 
+import com.shopwise.model.Customer;
+import com.shopwise.model.Merchant;
 import com.shopwise.model.Transaction;
 import com.shopwise.model.enums.TransactionStatus;
 import com.shopwise.repository.TransactionRepository;
@@ -30,16 +32,23 @@ class TransactionServiceImplTest {
     private final UUID merchantId = UUID.fromString("00000000-0000-0000-0000-000000000002");
     private final UUID serviceId  = UUID.fromString("00000000-0000-0000-0000-000000000003");
 
+    private Customer buildCustomer() {
+        Merchant merchant = new Merchant(merchantId, "Shop", "0600000000", "shop@example.com",
+                "1 rue de la Paix", "12345678901234", "hashed", null);
+        return new Customer(customerId, "Alice", "0601020304", "alice@example.com", merchant, null);
+    }
+
     @Test
     void getTransactionsByCustomerId_returnsTransactionList() {
+        Customer customer = buildCustomer();
         Transaction tx = new Transaction(UUID.randomUUID(), LocalDateTime.now(),
-                TransactionStatus.COMPLETED, (short) 10, serviceId, merchantId, customerId);
+                TransactionStatus.COMPLETED, (short) 10, null, null, customer);
         when(transactionRepository.getTransactionsByCustomerId(customerId)).thenReturn(List.of(tx));
 
         List<Transaction> result = service.getTransactionsByCustomerId(customerId);
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getCustomerId()).isEqualTo(customerId);
+        assertThat(result.get(0).getCustomer().getCustomerId()).isEqualTo(customerId);
     }
 
     @Test

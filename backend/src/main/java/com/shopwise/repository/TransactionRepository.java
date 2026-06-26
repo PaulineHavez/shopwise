@@ -10,8 +10,9 @@ import java.util.UUID;
 
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
 
-    List<Transaction> getTransactionsByCustomerId(UUID customerId);
+    @Query("SELECT t FROM Transaction t WHERE t.customer.customerId = :customerId")
+    List<Transaction> getTransactionsByCustomerId(@Param("customerId") UUID customerId);
 
-    @Query("SELECT SUM(t.earnedPoints) FROM Transaction t WHERE t.customerId = :customerId")
+    @Query("SELECT SUM(t.earnedPoints) FROM Transaction t WHERE t.customer.customerId = :customerId")
     Integer getEarnedPointsByCustomerId(@Param("customerId") UUID customerId);
 }
