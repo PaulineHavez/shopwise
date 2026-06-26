@@ -2,7 +2,10 @@ package com.shopwise.controller;
 
 import tools.jackson.databind.ObjectMapper;
 import com.shopwise.config.SecurityConfig;
+import com.shopwise.dto.AppointmentRequest;
 import com.shopwise.model.Appointment;
+import com.shopwise.model.Customer;
+import com.shopwise.model.Merchant;
 import com.shopwise.model.enums.AppointmentStatus;
 import com.shopwise.service.AppointmentService;
 import org.junit.jupiter.api.Test;
@@ -46,27 +49,41 @@ class AppointmentControllerTest {
     private final UUID serviceId     = UUID.fromString("00000000-0000-0000-0000-000000000004");
 
     private Appointment buildAppointment(AppointmentStatus status) {
-        return new Appointment(
-                appointmentId,
+        Merchant merchant = new Merchant(merchantId, "ShopCo", "0601020304", "shop@example.com",
+                "1 rue de la Paix", "12345678901234", "hashed", null);
+        com.shopwise.model.Service service = new com.shopwise.model.Service(serviceId, "Coupe", merchant);
+        Customer customer = new Customer(customerId, "Alice", "0601020304", "alice@example.com", merchant, null);
+
+        Appointment appointment = new Appointment();
+        appointment.setAppointmentId(appointmentId);
+        appointment.setStartAt(LocalDateTime.of(2025, 6, 20, 10, 0));
+        appointment.setEndAt(LocalDateTime.of(2025, 6, 20, 11, 0));
+        appointment.setStatus(status);
+        appointment.setEarnedPoints((short) 10);
+        appointment.setService(service);
+        appointment.setMerchant(merchant);
+        appointment.setCustomer(customer);
+        return appointment;
+    }
+
+    private AppointmentRequest buildRequest() {
+        return new AppointmentRequest(
                 LocalDateTime.of(2025, 6, 20, 10, 0),
                 LocalDateTime.of(2025, 6, 20, 11, 0),
-                status,
-                (short) 10,
                 serviceId,
                 merchantId,
-                customerId,
-                null
+                customerId
         );
     }
 
     @Test
     void createAppointment_validBody_returns201() throws Exception {
         Appointment appointment = buildAppointment(AppointmentStatus.UPCOMING);
-        when(appointmentService.createAppointment(any(Appointment.class))).thenReturn(appointment);
+        when(appointmentService.createAppointment(any(AppointmentRequest.class))).thenReturn(appointment);
 
         mockMvc.perform(post("/api/appointments/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(appointment)))
+                        .content(objectMapper.writeValueAsString(buildRequest())))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.appointmentId").value(appointmentId.toString()))
                 .andExpect(jsonPath("$.status").value("UPCOMING"));

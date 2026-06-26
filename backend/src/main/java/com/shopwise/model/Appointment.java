@@ -1,5 +1,6 @@
 package com.shopwise.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.shopwise.model.enums.AppointmentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -33,24 +34,23 @@ public class Appointment {
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private  AppointmentStatus status;
+    private AppointmentStatus status;
 
     @Column(name = "earned_points")
     private Short earnedPoints;
 
-    @Column(name = "service_id", nullable = false)
-    @NotNull
-    private UUID serviceId;;
-
-    @Column(name = "merchant_id", nullable = false)
-    @NotNull
-    private UUID merchantId;
-
-    @Column(name = "customer_id", nullable = false)
-    @NotNull
-    private UUID customerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id", nullable = false)
+    @JsonIgnore
+    private Service service;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
+    @JoinColumn(name = "merchant_id", nullable = false)
+    @JsonIgnore
+    private Merchant merchant;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false)
+    @JsonIgnore
     private Customer customer;
 }

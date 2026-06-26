@@ -1,14 +1,18 @@
 package com.shopwise.service;
 
+import com.shopwise.dto.AppointmentRequest;
 import com.shopwise.exception.AnavailableServiceException;
 import com.shopwise.exception.AppointmentCompletedException;
 import com.shopwise.exception.AppointmentNotFoundException;
 import com.shopwise.exception.MerchantNotFoundException;
 import com.shopwise.model.Appointment;
+import com.shopwise.model.Customer;
 import com.shopwise.model.Merchant;
 import com.shopwise.model.enums.AppointmentStatus;
 import com.shopwise.repository.AppointmentRepository;
+import com.shopwise.repository.CustomerRepository;
 import com.shopwise.repository.MerchantRepository;
+import com.shopwise.repository.ServiceRepository;
 import com.shopwise.service.impl.AppointmentServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +38,11 @@ class AppointmentServiceImplTest {
     @Mock
     private AppointmentRepository appointmentRepository;
     @Mock
+    private ServiceRepository serviceRepository;
+    @Mock
     private MerchantRepository merchantRepository;
+    @Mock
+    private CustomerRepository customerRepository;
 
     @InjectMocks
     private AppointmentServiceImpl service;
@@ -44,21 +52,52 @@ class AppointmentServiceImplTest {
     private final UUID customerId    = UUID.fromString("00000000-0000-0000-0000-000000000001");
     private final UUID serviceId     = UUID.fromString("00000000-0000-0000-0000-000000000003");
 
+    private Merchant buildMerchant(Short points) {
+        return new Merchant(merchantId, "Shop", "0601020304", "shop@example.com",
+                "1 rue de la Paix", "12345678901234", "hashed", points);
+    }
+
+    private com.shopwise.model.Service buildService() {
+        return new com.shopwise.model.Service(serviceId, "Coupe", buildMerchant(null));
+    }
+
+    private Customer buildCustomer() {
+        return new Customer(customerId, "Alice", "0601020304", "alice@example.com", buildMerchant(null), null);
+    }
+
     private Appointment buildAppointment(AppointmentStatus status) {
-        LocalDateTime start = LocalDateTime.of(2026, 6, 20, 10, 0);
-        LocalDateTime end   = LocalDateTime.of(2026, 6, 20, 11, 0);
-        return new Appointment(appointmentId, start, end, status, null, serviceId, merchantId, customerId, null);
+        Appointment appointment = new Appointment();
+        appointment.setAppointmentId(appointmentId);
+        appointment.setStartAt(LocalDateTime.of(2026, 6, 20, 10, 0));
+        appointment.setEndAt(LocalDateTime.of(2026, 6, 20, 11, 0));
+        appointment.setStatus(status);
+        appointment.setService(buildService());
+        appointment.setMerchant(buildMerchant(null));
+        appointment.setCustomer(buildCustomer());
+        return appointment;
+    }
+
+    private AppointmentRequest buildRequest() {
+        return new AppointmentRequest(
+                LocalDateTime.of(2026, 6, 20, 10, 0),
+                LocalDateTime.of(2026, 6, 20, 11, 0),
+                serviceId,
+                merchantId,
+                customerId
+        );
     }
 
     // createAppointment
 
     @Test
     void createAppointment_overlapping_throwsAnavailableServiceException() {
-        Appointment appointment = buildAppointment(null);
+        when(serviceRepository.findById(serviceId)).thenReturn(Optional.of(buildService()));
+        when(merchantRepository.findById(merchantId)).thenReturn(Optional.of(buildMerchant(null)));
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(buildCustomer()));
         when(appointmentRepository.existsOverlappingAppointment(
                 eq(serviceId), any(), any(), any())).thenReturn(true);
 
-        assertThatThrownBy(() -> service.createAppointment(appointment))
+        assertThatThrownBy(() -> service.createAppointment(buildRequest()))
                 .isInstanceOf(AnavailableServiceException.class);
 
         verify(appointmentRepository, never()).save(any());
@@ -66,15 +105,18 @@ class AppointmentServiceImplTest {
 
     @Test
     void createAppointment_noOverlap_setsStatusUpcomingAndSaves() {
-        Appointment appointment = buildAppointment(null);
+        Appointment saved = buildAppointment(AppointmentStatus.UPCOMING);
+        when(serviceRepository.findById(serviceId)).thenReturn(Optional.of(buildService()));
+        when(merchantRepository.findById(merchantId)).thenReturn(Optional.of(buildMerchant(null)));
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(buildCustomer()));
         when(appointmentRepository.existsOverlappingAppointment(
                 eq(serviceId), any(), any(), any())).thenReturn(false);
-        when(appointmentRepository.save(appointment)).thenReturn(appointment);
+        when(appointmentRepository.save(any())).thenReturn(saved);
 
-        Appointment result = service.createAppointment(appointment);
+        Appointment result = service.createAppointment(buildRequest());
 
         assertThat(result.getStatus()).isEqualTo(AppointmentStatus.UPCOMING);
-        verify(appointmentRepository).save(appointment);
+        verify(appointmentRepository).save(any());
     }
 
     // getAppointments
@@ -128,16 +170,13 @@ class AppointmentServiceImplTest {
 
         assertThat(result.getStatus()).isEqualTo(AppointmentStatus.CANCELLED);
         assertThat(result.getEarnedPoints()).isNull();
-        verify(merchantRepository, never()).findById(any());
     }
 
     @Test
     void editAppointment_completeWithMerchantPoints_setsEarnedPoints() {
         Appointment appointment = buildAppointment(AppointmentStatus.UPCOMING);
-        Merchant merchant = new Merchant(merchantId, "Shop", "0601020304", "shop@example.com",
-                "1 rue de la Paix", "12345678901234", "hashed", (short) 10);
+        appointment.setMerchant(buildMerchant((short) 10));
         when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(appointment));
-        when(merchantRepository.findById(merchantId)).thenReturn(Optional.of(merchant));
         when(appointmentRepository.save(appointment)).thenReturn(appointment);
 
         Appointment result = service.editAppointment(appointmentId, AppointmentStatus.COMPLETED);
@@ -149,10 +188,8 @@ class AppointmentServiceImplTest {
     @Test
     void editAppointment_completeWithNullMerchantPoints_doesNotSetEarnedPoints() {
         Appointment appointment = buildAppointment(AppointmentStatus.UPCOMING);
-        Merchant merchant = new Merchant(merchantId, "Shop", "0601020304", "shop@example.com",
-                "1 rue de la Paix", "12345678901234", "hashed", null);
+        appointment.setMerchant(buildMerchant(null));
         when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(appointment));
-        when(merchantRepository.findById(merchantId)).thenReturn(Optional.of(merchant));
         when(appointmentRepository.save(appointment)).thenReturn(appointment);
 
         Appointment result = service.editAppointment(appointmentId, AppointmentStatus.COMPLETED);
@@ -164,8 +201,8 @@ class AppointmentServiceImplTest {
     @Test
     void editAppointment_completeMerchantNotFound_throwsMerchantNotFoundException() {
         Appointment appointment = buildAppointment(AppointmentStatus.UPCOMING);
+        appointment.setMerchant(null);
         when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(appointment));
-        when(merchantRepository.findById(merchantId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.editAppointment(appointmentId, AppointmentStatus.COMPLETED))
                 .isInstanceOf(MerchantNotFoundException.class);

@@ -1,12 +1,12 @@
 package com.shopwise.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -26,7 +26,8 @@ public class Service {
     @NotNull
     private String name;
 
-    @Column(name = "merchant_id", nullable = false)
-    @NotNull
-    private UUID merchantId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "merchant_id", nullable = false)
+    @JsonIgnore
+    private Merchant merchant;
 }
