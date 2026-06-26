@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CustomerData } from './customer-data';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpClientModule, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
@@ -16,6 +16,7 @@ describe('CustomerData', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: MAT_DIALOG_DATA, useValue: { customerId: 'customer-1' } },
+        { provide: MatDialogRef, useValue: { close: jasmine.createSpy('close') } },
       ],
     })
     .overrideComponent(CustomerData, { remove: { imports: [HttpClientModule] } })

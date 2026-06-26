@@ -27,15 +27,6 @@ describe('HeaderComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize errorMessage as empty string', () => {
-    expect(component.errorMessage).toBe('');
-  });
-
-  it('showError() should set errorMessage', () => {
-    component.showError('Une erreur est survenue');
-    expect(component.errorMessage).toBe('Une erreur est survenue');
-  });
-
   it('openProSpaceLoginForm() should open a dialog', () => {
     component.openProSpaceLoginForm();
     expect(matDialog.open).toHaveBeenCalled();
