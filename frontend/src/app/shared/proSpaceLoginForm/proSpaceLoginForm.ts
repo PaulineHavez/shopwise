@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-espace-pro-dialog',
@@ -32,7 +33,7 @@ export class ProSpaceLoginForm {
   password: string = '';
   isLoading: boolean = false;
 
-  constructor(private dialogRef: MatDialogRef<ProSpaceLoginForm>,   private http: HttpClient, private router: Router) {}
+  constructor(private dialogRef: MatDialogRef<ProSpaceLoginForm>, private http: HttpClient, private router: Router, private authService: AuthService) {}
 
  onSubmit(): void {
    if (!this.email || !this.password) return;
@@ -45,6 +46,7 @@ export class ProSpaceLoginForm {
    }).subscribe({
      next: (response:any) => {
        this.isLoading = false;
+       this.authService.login(response.merchantId, 'merchant');
        this.dialogRef.close(response);
        this.router.navigate(['/merchant', response.merchantId]);
      },
