@@ -1,0 +1,32 @@
+package com.shopwise.repository;
+
+import com.shopwise.model.Appointment;
+import com.shopwise.model.enums.AppointmentStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.UUID;
+
+public interface AppointmentRepository extends JpaRepository<Appointment, UUID>, JpaSpecificationExecutor<Appointment> {
+
+    @Query("""
+    SELECT COUNT(a) > 0 FROM Appointment a
+    WHERE a.service.serviceId = :serviceId
+    AND a.startAt < :endAt
+    AND a.endAt > :startAt
+    AND a.status NOT IN :excludedStatuses
+    """)
+    boolean existsOverlappingAppointment(
+            @Param("serviceId") UUID serviceId,
+            @Param("startAt") LocalDateTime startAt,
+            @Param("endAt") LocalDateTime endAt,
+            @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
+    );
+
+    @Query("SELECT SUM(a.earnedPoints) FROM Appointment a WHERE a.customer.customerId = :customerId")
+    Integer getEarnedPointsByCustomerId(@Param("customerId") UUID customerId);
+}

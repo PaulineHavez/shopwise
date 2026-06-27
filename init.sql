@@ -2,12 +2,13 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE MERCHANT(
                          merchant_id UUID DEFAULT gen_random_uuid(),
-                         name VARCHAR(50) NOT NULL,
+                         name VARCHAR(255) NOT NULL,
                          phone_number VARCHAR(15) NOT NULL,
                          headquarters_address VARCHAR(255) NOT NULL,
                          siret_number VARCHAR(14) NOT NULL,
                          email VARCHAR(255) NOT NULL,
                          hash_password VARCHAR(255) NOT NULL,
+                         automatic_earned_points SMALLINT,
                          PRIMARY KEY(merchant_id),
                          UNIQUE(phone_number),
                          UNIQUE(siret_number),
@@ -28,7 +29,7 @@ CREATE TABLE CUSTOMER(
                          phone_number VARCHAR(15) NOT NULL,
                          email VARCHAR(255) NOT NULL,
                          merchant_id UUID NOT NULL,
-                         hash_password VARCHAR(255) NOT NULL,
+                         hash_password VARCHAR(255),
                          PRIMARY KEY(customer_id),
                          UNIQUE(phone_number),
                          UNIQUE(email),
@@ -37,8 +38,9 @@ CREATE TABLE CUSTOMER(
 
 CREATE TABLE APPOINTMENT(
                             appointment_id UUID DEFAULT gen_random_uuid(),
-                            appointment_date TIMESTAMP NOT NULL,
-                            status SMALLINT NOT NULL,
+                            start_at TIMESTAMP NOT NULL,
+                            end_at TIMESTAMP NOT NULL,
+                            status VARCHAR(255) NOT NULL,
                             earned_points SMALLINT,
                             service_id UUID NOT NULL,
                             merchant_id UUID NOT NULL,
@@ -52,7 +54,8 @@ CREATE TABLE APPOINTMENT(
 CREATE TABLE TRANSACTION(
                             transaction_id UUID DEFAULT gen_random_uuid(),
                             transaction_date TIMESTAMP NOT NULL,
-                            earned_points INT,
+                            earned_points SMALLINT,
+                            status VARCHAR(255) NOT NULL,
                             service_id UUID NOT NULL,
                             merchant_id UUID NOT NULL,
                             customer_id UUID NOT NULL,
@@ -62,13 +65,3 @@ CREATE TABLE TRANSACTION(
                             FOREIGN KEY(customer_id) REFERENCES CUSTOMER(customer_id)
 );
 
--- Data test : Marie Dupont, merchant
-INSERT INTO MERCHANT (phone_number, name,  headquarters_address, siret_number, email, hash_password)
-VALUES (
-           '060000000',
-           'Dupont',
-           '12 rue du Nil Paris 75002',
-           '80295478500015',
-           'marie.dupont@chezmarie.fr',
-           '$2a$10$Omi/w/A2hLFokoXln21tHOtpBMzeV57psP1ymgbmmQ5OB8KVKTtgC'
-       );

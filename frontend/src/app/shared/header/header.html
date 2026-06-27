@@ -8,14 +8,33 @@
 
   <div class="login-section">
 
-  <button mat-stroked-button class="btn-pro" (click)="openProSpaceLoginForm()">
-    Espace Pro
-  </button>
+    @if (currentUser$ | async; as user) {
 
-  <button mat-button>
-    <mat-icon>account_circle</mat-icon>
-    Mon compte
-  </button>
+      <button mat-stroked-button
+              [class.btn-pro]="user.role === 'merchant'"
+              (click)="goToDashboard(user)">
+        <mat-icon>{{ user.role === 'merchant' ? 'store' : 'account_circle' }}</mat-icon>
+        <span class="btn-label">{{ user.role === 'merchant' ? 'Espace Pro' : 'Mon compte' }}</span>
+      </button>
+
+      <button mat-button color="warn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span class="btn-label">Déconnexion</span>
+      </button>
+
+    } @else {
+
+      <button mat-stroked-button class="btn-pro" (click)="openProSpaceLoginForm()">
+        <mat-icon>store</mat-icon>
+        <span class="btn-label">Espace Pro</span>
+      </button>
+
+      <button mat-button (click)="openCustomerSpaceLoginForm()">
+        <mat-icon>account_circle</mat-icon>
+        <span class="btn-label">Mon compte</span>
+      </button>
+
+    }
 
   </div>
 

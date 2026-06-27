@@ -1,0 +1,148 @@
+<div class="appointments-list-container">
+
+  <div class="mobile-filters-toggle">
+    <button mat-stroked-button type="button" (click)="toggleFilters()">
+      <mat-icon>tune</mat-icon>
+      Filtres
+      @if (activeFiltersCount() !== 0) {
+        <span class="filter-badge">{{ activeFiltersCount() }}</span>
+      }
+    </button>
+  </div>
+
+  @if (filtersOpen()) {
+    <div class="filters-backdrop" (click)="closeFilters()"></div>
+  }
+
+  <div class="filters-bar" [class.is-open]="filtersOpen()">
+
+    <div class="filters-panel-header">
+      <span class="filters-panel-title">Filtres</span>
+      <button mat-icon-button type="button" (click)="closeFilters()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Date</mat-label>
+      <input matInput [matDatepicker]="picker" [ngModel]="dateFilter()" (ngModelChange)="dateFilter.set($event)" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Statut</mat-label>
+      <mat-select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+        <mat-option value="UPCOMING">À venir</mat-option>
+        <mat-option value="COMPLETED">Honoré</mat-option>
+        <mat-option value="CANCELLED">Annulé</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Email</mat-label>
+      <input matInput type="text" [ngModel]="emailFilter()" (ngModelChange)="onEmailChange($event)" />
+    </mat-form-field>
+
+    <div class="filters-actions">
+      <button mat-stroked-button type="button" (click)="resetFilters()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Réinitialiser
+      </button>
+      <button mat-flat-button type="button" class="apply-btn" (click)="applyFilters()">
+        Appliquer
+      </button>
+    </div>
+
+  </div>
+
+  @if (appointmentsResource.isLoading()) {
+  <div class="loading-state">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+  }
+
+  @if (appointmentsResource.error()) {
+  <p class="error-state">Impossible de charger les rendez-vous.</p>
+  }
+
+  @if (!appointmentsResource.isLoading() && !appointmentsResource.error()) {
+  <table mat-table [dataSource]="appointmentsResource.value()" class="appointments-table">
+    <ng-container matColumnDef="startAt">
+      <th mat-header-cell *matHeaderCellDef>Début</th>
+      <td mat-cell *matCellDef="let a">{{ a.startAt | date:'dd/MM/yyyy HH:mm' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="endAt">
+      <th mat-header-cell *matHeaderCellDef>Fin</th>
+      <td mat-cell *matCellDef="let a">{{ a.endAt | date:'dd/MM/yyyy HH:mm' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+
+      <td mat-cell *matCellDef="let a">
+
+        @if (editingAppointmentId() === a.appointmentId) {
+
+        <mat-select
+          [value]="a.status"
+          (selectionChange)="updateStatus(a.appointmentId, $event.value)">
+
+          <mat-option value="UPCOMING">
+            À venir
+          </mat-option>
+
+          <mat-option value="CANCELLED">
+            Annuler
+          </mat-option>
+
+          <mat-option value="COMPLETED">
+            Terminé
+          </mat-option>
+
+        </mat-select>
+
+        } @else {
+
+        {{ a.status }}
+
+        @if (a.status !== 'COMPLETED') {
+
+        <button
+          mat-icon-button
+          type="button"
+          (click)="editStatus(a.appointmentId)"
+          matTooltip="Modifier le statut">
+
+          <mat-icon>edit</mat-icon>
+
+        </button>
+
+        }
+
+        }
+
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>Client</th>
+      <td mat-cell *matCellDef="let a">{{ a.customerEmail }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="earnedPoints">
+      <th mat-header-cell *matHeaderCellDef>Points gagnés</th>
+      <td mat-cell *matCellDef="let a">{{ a.earnedPoints ?? '-' }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  @if (appointmentsResource.value().length === 0) {
+  <p class="empty-state">Aucun rendez-vous ne correspond à ces critères.</p>
+  }
+  }
+
+</div>

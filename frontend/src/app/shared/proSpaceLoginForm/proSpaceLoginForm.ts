@@ -7,6 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-espace-pro-dialog',
@@ -19,33 +22,39 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    HttpClientModule
   ],
-  templateUrl: '/proSpaceLoginForm.html',
-  styleUrl: '/proSpaceLoginForm.scss'
+  templateUrl: './proSpaceLoginForm.html',
+  styleUrl: './proSpaceLoginForm.scss'
 })
 export class ProSpaceLoginForm {
   email: string = '';
   password: string = '';
   isLoading: boolean = false;
 
-  constructor(private dialogRef: MatDialogRef<ProSpaceLoginForm>) {}
+  constructor(private dialogRef: MatDialogRef<ProSpaceLoginForm>, private http: HttpClient, private router: Router, private authService: AuthService) {}
 
-  onSubmit(): void {
-    if (!this.email || !this.password) return;
+ onSubmit(): void {
+   if (!this.email || !this.password) return;
 
-    this.isLoading = true;
+   this.isLoading = true;
 
-    // Remplace par ton appel API
-    /*
-    setTimeout(() => {
-      this.isLoading = false;
-      console.log('Connexion commerçant :', this.email);
-      this.dialogRef.close({ email: this.email });
-    }, 1500);
-  */
-  }
-
+   this.http.post('/api/merchants/login', {
+     email: this.email,
+     password: this.password
+   }).subscribe({
+     next: (response:any) => {
+       this.isLoading = false;
+       this.authService.login(response.merchantId, 'merchant');
+       this.dialogRef.close(response);
+       this.router.navigate(['/merchant', response.merchantId]);
+     },
+     error: (err) => {
+       this.isLoading = false;
+     }
+   });
+ }
 
   onClose(): void {
     this.dialogRef.close();

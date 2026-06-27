@@ -1,0 +1,11 @@
+@use '../../../styles/dialog';
+
+.field-row {
+  display: flex;
+  gap: 16px;
+
+  @media (max-width: 599px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
