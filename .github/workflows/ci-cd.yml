@@ -79,11 +79,11 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: shopwise-backend:latest
+          tags: paulinehavez/shopwise-backend:latest
 
       - name: Build and push frontend
         uses: docker/build-push-action@v7
         with:
           context: ./frontend
           push: true
-          tags: shopwise-frontend:latest
+          tags: paulinehavez/shopwise-frontend:latest
