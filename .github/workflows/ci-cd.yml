@@ -3,7 +3,7 @@ name: ci cd build, tests and push images to DockerHub
 on:
   push:
     branches:
-      - dev/ci-cd
+      - main
 
 jobs:
   build-backend:
