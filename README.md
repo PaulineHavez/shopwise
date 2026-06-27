@@ -15,16 +15,7 @@ This project follows a **GitFlow** workflow.
 
 ### Feature branches
 
-Created from `develop` for each user story :
-
-```
-feature/issue-{number}-{short-description}
-```
-
-Examples :
-
-- `feature/issue-1-merchant-registration`
-- `feature/issue-3-login`
+Created from `develop` for each user story, fix or feature to do
 
 ### Rules
 
@@ -40,5 +31,5 @@ main
  ↑ PR (release)
 develop
  ↑ PR (feature done)
-feature/issue-X-name
+feat/short-description
 ```
